@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información personal</title>
+    <meta name="description" content="Jardinería Hernández, transformando tu patio, contamos con una gran variedad de servicios...">
+    <meta name="keywords" content="Jardinería, Servicios de Jardinería, Plantas, Jardín">
+    <link rel="icon" href="{{ url_for('static', filename='img/CapturaLogo.JPG') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilosE.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo1">
+            <figure class="logo__Empresa">
+                <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/CapturaLogo3.JPG') }}" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo"></a>
+            </figure>
+        </div>
+        <nav class="menu">
+            <ul class="menu__superior">
+                <li class="menu__icono">
+                    <div class="iconoBusqueda" alt="Buscar">
+                        <img src="{{ url_for('static', filename='img/search-alt-regular-36.png') }}" alt="lupa" class="icon buscarIcono">
+                        <div class="busqueda">
+                            <input type="text" placeholder="Buscar..." class="inputBuscar">
+                            <span class="limpiarBuscar"><strong>&times;</strong></span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('carrito')}}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
+                    <a href="{{ url_for('inicioSesion') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+                    <i class="fa-thin fa-circle-user" style="color: #fff;"></i>
+                </li>
+            </ul>
+            <ul class="menu__horizontal">
+                <li class="menu__Empresa"><a href="{{ url_for('index') }}">Inicio</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('servicios') }}">Servicios</a>
+                </li>
+                <li class="menu__Empresa"><a href="{{ url_for('catalogo') }}">Catálogo</a>
+                    <ul class="menu__vertical">
+                        <li><a href="{{ url_for('plantas') }}">Plantas</a></li>
+                        <li><a href="{{ url_for('fertilizantes') }}">Fertilizantes</a></li>
+                        <li><a href="{{ url_for('herramientas') }}">Herramientas</a></li>
+                        <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
+                    </ul>
+                </li>
+                <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
+            </ul>
+            <div class="flecha">
+                <a href="javascript:history.back()">
+                    <figure>
+                        <img src="{{ url_for('static', filename='img/left-arrow-alt-regular-24.png') }}" alt="atras" class="atras">
+                    </figure> 
+                </a>
+            </div>
+        </nav>
+    </header>
+    <div id="contenedor">
+        <main class="perfil">
+            <div class="editarPerfil">
+                <img src="{{ url_for('static', filename='img/juana.webp') }}" alt="Foto de perfil" id="imagenPerfil" class="fotoPerfil">
+            </div>
+            <div class="editarPerfil-barra">
+                <div class="editar" onclick="abrirVentana()">
+                    <img src="{{ url_for('static', filename='img/edit-alt-regular-24 (2).png') }}" alt="Editar" class="iconEditar">
+                    <span>Editar foto</span>
+                </div>
+            </div>
+            <div class="ventanaModal" id="modal">
+                <div class="contenedorModal">
+                    <span class="cerrar" onclick="cerrarVentana()">&times;</span>
+                    <h2>Seleccionar nueva foto de perfil</h2>
+                    <input type="file" accept="image/*" id="inputArchivo">
+                    <button onclick="subirFoto()">Subir foto</button>
+                </div>
+            </div>
+            <div class="contenedorFormulario">
+                <form class="formulario">
+                    <div class="formularioColumna">
+                        <label for="nombre" class="textFormulario">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="formularioColumna">
+                        <label for="apellido" class="textFormulario">Apellido:</label>
+                        <input type="text" id="apellido" name="apellido" required>
+                    </div>
+                    <div class="formularioColumna">
+                        <label for="celular" class="textFormulario">Celular:</label>
+                        <input type="tel" id="celular" name="celular" required>
+                    </div>
+                    <div class="formularioColumna">
+                        <label for="pais" class="textFormulario">País:</label>
+                        <select id="pais" name="pais" required>
+                            <option value="">Seleccionar</option>
+                            <option value="República Dominicana">República Dominicana</option>
+                        </select>
+                    </div>
+                </form>
+                <form class="formulario">
+                    <div class="formularioColumna">
+                        <label for="ciudad" class="textFormulario2">Ciudad:</label>
+                        <select id="ciudad" name="ciudad" required>
+                            <option value="">Seleccionar</option>
+                            <option value="Santiago">Santiago</option>
+                        </select>
+                    </div>
+                    <div class="formularioColumna">
+                        <label for="sectores" class="textFormulario2">Sector:</label>
+                        <select id="sectores" name="sectores" required>
+                            <option value="">Seleccionar</option>
+                            <option value="buenos aires">Buenos Aires</option>
+                            <option value="cerro de gurabo">Cerro de Gurabo</option>
+                            <option value="cienfuegos">Cienfuegos</option>
+                            <option value="el ejido">El Ejido</option>
+                            <option value="ensanche espaillat">Ensanche Espaillat</option>
+                            <option value="ensanche libertad">Ensanche Libertad</option>
+                            <option value="ensanche quisqueya">Ensanche Quisqueya</option>
+                            <option value="los padros">Los Prados</option>
+                            <option value="zona monumental">Zona Monumental</option>
+                            <option value="los jardines metropolitanos">Los Jardines Metropolitanos</option>
+                            <option value="villa olga">Villa Olga</option>
+                            <option value="la trinitaria">La Trinitaria</option>
+                            <option value="bella vista">Bella Vista</option>
+                            <option value="la herradura">La Herradura</option>
+                            <option value="la otra banda">La Otra Banda</option>
+                            <option value="monte adentro">Monte Adentro</option>
+                            <option value="villa maría">Villa María</option>
+                            <option value="los alamos">Los Alamos</option>
+                            <option value="pekin">Pekin</option>
+                            <option value="invivienda">Invivienda</option>
+                            <option value="arroyo hondo">Arroyo Hondo</option>
+                            <option value="nibaje">Nibaje</option>
+                            <option value="reparto universitario">Reparto universitario</option>
+                            <option value="el embrujo">El Embrujo</option>
+                            <option value="kokette">Kokette</option>
+                            <option value="el dorado">El Dorado</option>
+                            <option value="llanos de gurabo">Llanos de Gurabo</option>
+                            <option value="gurabo">Gurabo</option>
+                            <option value="buena vista">Buena Vista</option>
+                            <option value="la ermita">La Ermita</option>
+                            <option value="jacagua">Jacagua</option>
+                            <option value="Cienfuegos">Cienfuegos</option>
+                            <option value="las colinas">Las Colinas</option>
+                            <option value="altos de vireya">Altos de Vireya</option>
+                            <option value="pueblo nuevo">Pueblo Nuevo</option>
+                            <option value="la joya">La Joya</option>
+                            <option value="tamboril">Tamboril</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="formularioColumna">
+                        <label for="otro_sector" class="textFormulario2">Otro sector:</label>
+                        <input type="text" id="otro_sector" name="otro_sector">
+                    </div>
+                    <div class="formularioColumna">
+                        <label for="calle" class="textFormulario2">Calle:</label>
+                        <input type="text" id="calle" name="calle" required>
+                    </div>
+
+                    <button type="submit" class="boton">Guardar cambios</button>
+
+                </form>
+            </div>
+        </main>
+        <script src="{{ url_for('static', filename='js/fotoPerfil.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/infoPerfil.js') }}"></script>
+    </div>    
+    <footer class="footer">
+        <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+    </footer>
+</body>
+</html>

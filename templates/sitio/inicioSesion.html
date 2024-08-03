@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios</title>
+    <meta name="description" content="Jardinería Hernández, tranformando tu patio, contamos con una gran variedad de servicios...">
+    <meta name="keywords" content="Jardinería, Servicios de Jardinería, Plantas, Jardin">
+    <link rel="icon" href="{{ url_for('static', filename='img/CapturaLogo.JPG') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-free-5.15.4-web/css/all.css') }}">
+    <!-- Link del css falta -->
+</head>
+<body>
+<header>
+    <div class="logo1">
+        <figure class="logo__Empresa">
+            <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/CapturaLogo3.JPG') }}" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo"></a>
+        </figure>
+    </div>
+    <nav class="menu">
+        <!-- Menu-->  
+        <div class="abreMenu"><i class="fa fa-ellipsis-v"></i></div>
+       
+        <ul class="menu__superior">
+            <li class="menu__icono">
+                <div class="iconoBusqueda" alt="Buscar">
+                        <img src="{{ url_for('static', filename='img/search-alt-regular-36.png') }}" alt="lupa" class="icon buscarIcono">
+                        <div class="busqueda">
+                            <input type="text" placeholder="Buscar..." class="inputBuscar">
+                            <span class="limpiarBuscar"><strong>&times;</strong></span>
+                        </div>
+                    </div>
+                <a href="{{ url_for('carrito') }}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
+                <a href="{{ url_for('perfil') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+            </li>
+        </ul>
+          
+        <ul class="menu__horizontal">
+            <li class="menu__Empresa"><a href="{{ url_for('index') }}">Inicio</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('servicios') }}">Servicios</a>
+            </li>
+            <li class="menu__Empresa"><a href="{{ url_for('catalogo') }}">Productos</a>
+                <ul class="menu__vertical">
+                    <li><a href="{{ url_for('plantas') }}">Plantas</a></li>
+                    <li><a href="{{ url_for('fertilizantes') }}">Fertilizantes</a></li>
+                    <li><a href="{{ url_for('herramientas') }}">Herramientas</a></li>
+                    <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
+                </ul>
+            </li>
+            <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
+            <div class="cierraMenu"><i class="fa fa-times"></i></div>
+            <span class="iconos">
+                <!-- <i class="fab fa-facebook"></i> -->
+                <a href="https://www.instagram.com/jardineriahernandez21?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"><i class="fab fa-instagram"></i></a>
+                <!-- <i class="fab fa-twitter"></i>
+                <i class="fab fa-github"></i> -->
+            </span>
+        </ul>
+        <div class="flecha">
+            <a href="javascript:history.back()">
+            <figure>
+                <img src="{{ url_for('static', filename='img/left-arrow-alt-regular-24.png') }}" alt="atras" class="atras" >
+            </figure> 
+            </a>
+        </div>
+    </nav>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</header>
+<!-- Esto es inicio de sesión -->
+<main>
+    <section>
+        <article class="form__usuario">      
+            <form id="iniciosesion_form" method="POST" action="{{ url_for('inicioSesion') }}">
+                <h2>Iniciar sesión</h2>
+                <div class="pass1">
+                    <i class="fa fa-envelope"></i>
+                    <input type="email" id="correo" name="correo" placeholder="Correo electrónico" required>
+                </div>
+                <br>
+                <div class="pass1">
+                    <i class="fa fa-key"></i>
+                    <input type="password" id="pass" name="pass" placeholder="Contraseña" required>
+                    <span class="eye" onclick="myFuntion()">
+                        <i id="ocultar" class="fa fa-eye"></i>
+                        <i id="ocultar2" class="fa fa-eye-slash"></i>
+                    </span>
+                </div>
+                <div class="usuario">
+                    <a href="{{ url_for('olvidarContrasena') }}">
+                        <p>¿Has olvidado tu contraseña?</p>
+                    </a>
+                </div>
+                <div class="boton">
+                    <input type="submit" value="Ingresar">
+                </div>
+                <div class="otra__manera">
+                    <h4>Continuar con</h4>
+                    <figure class="vinculo">
+                        <a href="https://www.icloud.com/" target="_blank">
+                            <i class="fab fa-apple"></i>
+                        </a>
+                        <a href="https://accounts.google.com/v3/signin/identifier?hl=es-419&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&service=mail&ec=GAlAFw&authuser=0&theme=mn&ddm=0&flowName=GlifWebSignIn&flowEntry=AddSession" target="_blank">
+                            <i class="fab fa-google"></i>
+                        </a>
+                    </figure>   
+                </div>  
+            </form>
+            <div class="registrame">
+                <p>¿No tienes cuenta aún? <a href="{{ url_for('registro') }}"><strong>Regístrate aquí</strong></a></p>
+            </div>
+
+        </article>
+    </section>
+    <script src="{{ url_for('static', filename='js/longin.js') }}"></script>
+</main>
+        <footer class="footer">
+            <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+        </footer>
+</body>
+</html>

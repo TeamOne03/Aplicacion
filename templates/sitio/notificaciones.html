@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones</title>
+    <meta name="description" content="Jardinería Hernández, transformando tu patio, contamos con una gran variedad de servicios...">
+    <meta name="keywords" content="Jardinería, Servicios de Jardinería, Plantas, Jardin">
+    <link rel="icon" href="{{ url_for('static', filename='img/iconoverde.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilosE.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo1">
+            <figure class="logo__Empresa">
+                <a href="{{ url_for('static', filename='index.html') }}"><img src="{{ url_for('static', filename='img/CapturaLogo3.JPG') }}" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo"></a>
+            </figure>
+        </div>
+        <nav class="menu">
+            <ul class="menu__superior">
+                <li class="menu__icono">
+                    <div class="iconoBusqueda" alt="Buscar">
+                        <img src="{{ url_for('static', filename='img/search-alt-regular-36.png') }}" alt="lupa" class="icon buscarIcono">
+                        <div class="busqueda">
+                            <input type="text" placeholder="Buscar..." class="inputBuscar">
+                            <span class="limpiarBuscar"><strong>&times;</strong></span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('static', filename='carrito.html') }}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
+                    <a href="{{ url_for('static', filename='inicioSesion.html') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+                    <i class="fa-thin fa-circle-user" style="color: #fff;"></i>
+                </li>
+            </ul>
+            <ul class="menu__horizontal">
+                <li class="menu__Empresa"><a href="{{ url_for('index') }}">Inicio</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('servicios') }}">Servicios</a>
+                </li>
+                <li class="menu__Empresa"><a href="{{ url_for('catalogo') }}">Catálogo</a>
+                    <ul class="menu__vertical">
+                        <li><a href="{{ url_for('plantas') }}">Plantas</a></li>
+                        <li><a href="{{ url_for('fertilizantes') }}">Fertilizantes</a></li>
+                        <li><a href="{{ url_for('herramientas') }}">Herramientas</a></li>
+                        <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
+                    </ul>
+                </li>
+                <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
+            </ul>
+            <div class="flecha">
+                <a href="javascript:history.back()">
+                <figure>
+                    <img src="{{ url_for('static', filename='img/left-arrow-alt-regular-24.png') }}" alt="atras" class="atras" >
+                </figure> 
+                </a>
+            </div>
+        </nav>
+    </header>
+    <div id="contenedor">
+        <main class="perfil">
+            <div class="notificacion" id="notificacion">
+                <h2>Notificación de envío</h2>
+                <p>¡Hola Juana Almanzar<span id="nombreCliente"></span>!</p>
+                <p>Tu pedido ha sido enviado:</p>
+                <ul>
+                    <li><strong>Pedido:</strong> #EA856941sf <span id="numeroPedido"></span></li>
+                    <li><strong>Fecha de envío:</strong> 28/06/2024 <span id="fechaEnvio"></span></li>
+                    <li><strong>Artículos:</strong> 3 <span id="listaArticulos"></span></li>
+                </ul>
+                <p>Consulta el estado con el número de seguimiento proporcionado.</p>
+                <p>¡Gracias por elegirnos!</p>
+                <p><strong>Jardinería Hernández</strong></p>
+            </div>
+        </main>
+        <script src="{{ url_for('static', filename='js/notificacion.js') }}"></script>
+    </div>    
+    <footer class="footer">
+        <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+    </footer>
+</body>
+</html>

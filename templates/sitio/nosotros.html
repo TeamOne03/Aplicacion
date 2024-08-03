@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosotros</title>
+    <meta name="description" content="Jardinería Hernández, tranformando tu patio, contamos con una gran variedad de servicios...">
+    <meta name="keywords" content="Jardinería, Servicios de Jardinería, Plantas, Jardin">
+    <link rel="icon" href="{{ url_for('static', filename='img/iconoverde.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilosE.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo1">
+            <figure class="logo__Empresa">
+                <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/CapturaLogo3.JPG') }}" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo"></a>
+            </figure>
+        </div>
+        <nav class="menu">
+            <!-- Menú -->
+            <ul class="menu__superior">
+                <li class="menu__icono">
+                    <div class="iconoBusqueda" alt="Buscar">
+                        <img src="{{ url_for('static', filename='img/search-alt-regular-36.png') }}" alt="lupa" class="icon buscarIcono">
+                        <div class="busqueda">
+                            <input type="text" placeholder="Buscar..." class="inputBuscar">
+                            <span class="limpiarBuscar"><strong>&times;</strong></span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('carrito') }}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
+                    <a href="{{ url_for('perfil') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+                </li>
+            </ul>
+            <ul class="menu__horizontal">
+                <li class="menu__Empresa"><a href="{{ url_for('index') }}">Inicio</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('servicios') }}">Servicios</a>
+                </li>
+                <li class="menu__Empresa"><a href="{{ url_for('catalogo') }}">Catálogo</a>
+                    <ul class="menu__vertical">
+                        <li><a href="{{ url_for('plantas') }}">Plantas</a></li>
+                        <li><a href="{{ url_for('fertilizantes') }}">Fertilizantes</a></li>
+                        <li><a href="{{ url_for('herramientas') }}">Herramientas</a></li>
+                        <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
+                    </ul>
+                </li>
+                <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
+            </ul>
+            <div class="flecha">
+                <a href="javascript:history.back()">
+                    <figure>
+                        <img src="{{ url_for('static', filename='img/left-arrow-alt-regular-24.png') }}" alt="atras" class="atras" >
+                    </figure> 
+                </a>
+            </div>
+        </nav>
+    </header>
+    <div class="nosotros">
+        <main>
+            <section>
+                <h2 class="subTema">¿Quiénes somos?</h2>
+                <p class="texto">En Jardinería Hernández, somos más que una empresa; somos tu socio confiable a la hora de transformar tu patio. Con un equipo competente y comprometido, nos dedicamos a crear espacios verdes que reflejen tu estilo y personalidad. Desde diseño hasta mantenimiento, cada proyecto es realizado con pasión y profesionalismo. Confía en nosotros para convertir tu patio en un oasis de belleza y serenidad.</p>
+                <h2 class="subTema">Misión</h2> 
+                <p class="texto">Embellecer y enriquecer espacios verdes, proporcionando servicios de jardinería de alta calidad que superen las expectativas de nuestros clientes. Nos esforzamos por promover la armonía entre la naturaleza y el entorno construido, creando paisajes sostenibles que mejoren la calidad de vida y fomenten la conexión con la naturaleza.</p>
+                <h2 class="subTema">Visión</h2>
+                <p class="texto">Nos visualizamos como líderes en el sector de la jardinería, siendo reconocidos por nuestra excelencia en el diseño, la instalación y el mantenimiento de espacios verdes tanto residenciales como comerciales. Aspiramos a ser pioneros en prácticas sostenibles, innovadoras y estéticamente cautivadoras, contribuyendo así al bienestar de nuestras comunidades y al cuidado del medio ambiente.</p>
+                <h2 class="subTema">Valores</h2>
+                <p class="texto">
+                    Pasión por la naturaleza.<br>
+                    Compromiso con la excelencia.<br>
+                    Integridad y transparencia.<br>
+                    Innovación y creatividad.<br>
+                    Colaboración y trabajo en equipo.<br>
+                    Responsabilidad social y ambiental.<br>
+                </p>
+            </section>
+        </main>
+    </div>
+    <footer class="footer">
+        <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+    </footer>
+</body>
+</html>

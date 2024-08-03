@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accesorios</title>
+    <meta name="description" content="Jardinería Hernández, transformando tu patio, contamos con una gran variedad de servicios...">
+    <meta name="keywords" content="Jardinería, Servicios de Jardinería, Plantas, Jardín">
+    <link rel="icon" href="{{ url_for('static', filename='img/iconoverde.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilosM.css') }}">
+</head>
+<body>
+    <header>
+    <div class="logo1">
+        <figure class="logo__Empresa">
+            <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/CapturaLogo3.JPG') }}" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo"></a>
+        </figure>
+    </div>
+    <nav class="menu">
+            <!-- Menu-->
+        <ul class="menu__superior">
+            <li class="menu__icono">
+                <div class="iconoBusqueda" alt="Buscar">
+                    <img src="{{ url_for('static', filename='img/search-alt-regular-36.png') }}" alt="lupa" class="icon buscarIcono">
+                    <div class="busqueda">
+                        <input type="text" placeholder="Buscar..." class="inputBuscar">
+                        <span class="limpiarBuscar"><strong>&times;</strong></span>
+                    </div>
+                </div>
+                <a href="{{ url_for('carrito') }}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
+                <a href="{{ url_for('perfil') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+            </li>
+        </ul>
+        <ul class="menu__horizontal">
+            <li class="menu__Empresa"><a href="{{ url_for('index') }}">Inicio</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('servicios') }}">Servicios</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('catalogo') }}">Productos</a>
+                <ul class="menu__vertical">
+                    <li><a href="{{ url_for('plantas') }}">Plantas</a></li>
+                    <li><a href="{{ url_for('fertilizantes') }}">Fertilizantes</a></li>
+                    <li><a href="{{ url_for('herramientas') }}">Herramientas</a></li>
+                    <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
+                </ul>
+            </li>
+            <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
+        </ul>
+        <div class="flecha">
+            <a href="javascript:history.back()">
+            <figure>
+                <img src="{{ url_for('static', filename='img/left-arrow-alt-regular-24.png') }}" alt="atras" class="atras">
+            </figure>
+            </a>
+        </div>
+    </nav>
+    </header>
+    <main class="M-main">
+        <div class="cuadro">
+            <div>
+                <figure class="articulo">
+                    <img src="{{ url_for('static', filename='img/maceta-verde-18.jpg') }}" alt="Maceta">
+                </figure>
+            </div>
+            <div class="descripcion">
+                <div class="nombre">
+                    <h2>Maceta plástica</h2>
+                </div>
+                <div class="precio">
+                    <p>Precio: RD$230</p>
+                </div>
+                <div class="disponibilidad">
+                    <p>Disponible</p>
+                </div>
+                <div class="acercade">
+                    <p>Perfectas para interiores y exteriores. Posee agujero para el drenaje del agua. Nuestra maceta plástica de color verde es una combinación perfecta de estilo y funcionalidad para tus plantas. Con su tono verde vibrante, añade un toque refrescante a cualquier espacio interior o exterior. Fabricada con materiales de alta calidad, esta maceta es resistente y duradera, proporcionando un hogar seguro y elegante para tus plantas favoritas.</p>
+                </div>
+                <!-- Botón de compra -->
+                <span class="Cantidad-texto">Cantidad:</span>
+                <div class="cantidad-control">
+                    <button class="cantidad-btn" id="decremento">-</button>
+                    <input type="number" id="cantidad" value="1" max="99" min="1">
+                    <button class="cantidad-btn" id="incremento">+</button>
+                </div>
+                <br>
+                <div class="comprar">
+                    <button id="añadiralcarritoBtn" class="boton__comprar">Agregar al carrito</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/boton+-.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/carrito.js') }}"></script>
+</body>
+</html>

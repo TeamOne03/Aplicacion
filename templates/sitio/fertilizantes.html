@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fertilizantes</title>
+  <meta name="description" content="Jardinería Hernández, transformando tu patio, contamos con una gran variedad de servicios...">
+  <meta name="keywords" content="Jardinería, Servicios de Jardinería, Plantas, Jardín">
+  <link rel="icon" href="{{ url_for('static', filename='img/iconoverde.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilosM.css') }}">
+</head>
+<body>
+    <header>
+    <div class="logo1">
+        <figure class="logo__Empresa">
+            <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/CapturaLogo3.JPG') }}" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo"></a>
+        </figure>
+    </div>
+    <nav class="menu">
+            <!-- Menu-->
+        <ul class="menu__superior">
+            <li class="menu__icono">
+                <div class="iconoBusqueda" alt="Buscar">
+                    <img src="{{ url_for('static', filename='img/search-alt-regular-36.png') }}" alt="lupa" class="icon buscarIcono">
+                    <div class="busqueda">
+                        <input type="text" placeholder="Buscar..." class="inputBuscar">
+                        <span class="limpiarBuscar"><strong>&times;</strong></span>
+                    </div>
+                </div>
+                <a href="{{ url_for('carrito') }}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
+                <a href="{{ url_for('perfil') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+            </li>
+        </ul>
+        <ul class="menu__horizontal">
+            <li class="menu__Empresa"><a href="{{ url_for('index') }}">Inicio</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('servicios') }}">Servicios</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('catalogo') }}">Productos</a>
+                <ul class="menu__vertical">
+                    <li><a href="{{ url_for('plantas') }}">Plantas</a></li>
+                    <li><a href="{{ url_for('fertilizantes') }}">Fertilizantes</a></li>
+                    <li><a href="{{ url_for('herramientas') }}">Herramientas</a></li>
+                    <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
+                </ul>
+            </li>
+            <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
+        </ul>
+        <div class="flecha">
+            <a href="javascript:history.back()">
+            <figure>
+                <img src="{{ url_for('static', filename='img/left-arrow-alt-regular-24.png') }}" alt="atras" class="atras">
+            </figure>
+            </a>
+        </div>
+    </nav>
+    </header>
+    <main>
+        <section class="M-catalogo">
+            <h3 class="text-i">Fertilizantes</h3>
+            <div class="desplegable">
+                <li><a href="#" class="desplegable-desplasado">Categorías</a></li>
+                <ul class="desplegable-menu" style="display: none;">
+                    <li><a href="#" data-category="all">Relevancia</a></li>
+                    <li><a href="#" data-category="fertilizanteparaflores">Fertilizante para flores</a></li>
+                    <li><a href="#" data-category="vitaminaparaelsuelo">Vitaminas para el suelo</a></li>
+                    <li><a href="#" data-category="fertilizandederaiz">Fertilizante de raíces</a></li>
+                    <li><a href="#" data-category="vitaminasdecrecimiento">Vitaminas de crecimiento</a></li>
+                </ul>
+            </div>
+            <br><br>
+            <div class="M-productos">
+                <div class="M-producto" data-category="fertilizanteparaflores">
+                  <a href="{{ url_for('fertilizante1') }}"><img src="{{ url_for('static', filename='img/fertilizantecrecemas.jpg') }}" alt="Product 1"></a>
+                  <h2>Alimento para cactus</h2>
+                  <p class="M-precio-color">$313.00</p>
+                </div>
+                <div class="M-producto" data-category="vitaminaparaelsuelo">
+                  <a href="{{ url_for('fertilizante2') }}"><img src="{{ url_for('static', filename='img/fertilizantefoliar.jpg') }}" alt="Product 2"></a>
+                  <h2>Fertilizante foliar</h2>
+                  <p class="M-precio-color">$529.00</p>
+                </div>
+                <div class="M-producto" data-category="vitaminasdecrecimiento">
+                  <a href="{{ url_for('fertilizante3') }}"><img src="{{ url_for('static', filename='img/crecemas.jpg') }}" alt="Product 3"></a>
+                  <h2>Crece más</h2>
+                  <p class="M-precio-color">$330.00</p>
+                </div>
+                <div class="M-producto" data-category="fertilizanteparaflores">
+                    <a href="{{ url_for('fertilizante4') }}"><img src="{{ url_for('static', filename='img/crecemasactivador.jpg') }}" alt="Product 4"></a>
+                    <h2>Activador de flores</h2>
+                    <p class="M-precio-color">$310.00</p>
+                </div>
+                <div class="M-producto" data-category="fertilizanteparaflores">
+                    <a href="{{ url_for('fertilizante5') }}"><img src="{{ url_for('static', filename='img/crecemasorquideas.jpg') }}" alt="Product 5"></a>
+                    <h2>Alimento orquídeas</h2>
+                    <p class="M-precio-color">$355.00</p>
+                </div>
+                <div class="M-producto" data-category="fertilizandederaiz">
+                    <a href="{{ url_for('fertilizante6') }}"><img src="{{ url_for('static', filename='img/crecemasraices.jpg') }}" alt="Product 6"></a>
+                    <h2>Crece raíces</h2>
+                    <p class="M-precio-color">$293.00</p>
+                </div>
+                <div class="M-producto" data-category="vitaminaparaelsuelo">
+                    <a href="{{ url_for('fertilizante7') }}"><img src="{{ url_for('static', filename='img/nurish.jpg') }}" alt="Product 7"></a>
+                    <h2>Nurish</h2>
+                    <p class="M-precio-color">$107.00</p>
+                </div>
+                <div class="M-producto" data-category="vitaminaparaelsuelo">
+                    <a href="{{ url_for('fertilizante8') }}"><img src="{{ url_for('static', filename='img/nurish2.jpg') }}" alt="Product 8"></a>
+                    <h2>Nurish 3lb</h2>
+                    <p class="M-precio-color">$296.00</p>
+                </div>
+                {% for producto in productos %}
+                <div class="M-producto">
+                    <a href="{{ url_for('producto', idProducto=producto.idProducto) }}">
+                        <img src="data:image/png;base64,{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                    </a>
+                    <h2>{{ producto.nombre }}</h2>
+                    <p class="M-precio-color">${{ producto.precio }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/Categorias.js') }}"></script>
+</body>
+</html>

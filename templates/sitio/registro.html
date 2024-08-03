@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios</title>
+    <meta name="description" content="Jardinería Hernández, transformando tu patio, contamos con una gran variedad de servicios...">
+    <meta name="keywords" content="Jardinería, Servicios de Jardinería, Plantas, Jardín">
+    <link rel="icon" href="{{ url_for('static', filename='img/CapturaLogo.JPG') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-free-5.15.4-web/css/all.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo1">
+            <figure class="logo__Empresa">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='img/CapturaLogo3.JPG') }}" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo">
+                </a>
+            </figure>
+        </div>
+        <nav class="menu">
+            <!-- Menu -->
+            <div class="abreMenu">
+                <i class="fa fa-ellipsis-v"></i>
+            </div>
+            <ul class="menu__superior">
+                <li class="menu__icono">
+                    <div class="iconoBusqueda" alt="Buscar">
+                        <img src="{{ url_for('static', filename='img/search-alt-regular-36.png') }}" alt="lupa" class="icon buscarIcono">
+                        <div class="busqueda">
+                            <input type="text" placeholder="Buscar..." class="inputBuscar">
+                            <span class="limpiarBuscar"><strong>&times;</strong></span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('carrito') }}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
+                    <a href="{{ url_for('perfil') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+                </li>
+            </ul>
+            <ul class="menu__horizontal">
+                <li class="menu__Empresa"><a href="{{ url_for('index') }}">Inicio</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('servicios') }}">Servicios</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('catalogo') }}">Productos</a>
+                    <ul class="menu__vertical">
+                        <li><a href="{{ url_for('plantas') }}">Plantas</a></li>
+                        <li><a href="{{ url_for('fertilizantes') }}">Fertilizantes</a></li>
+                        <li><a href="{{ url_for('herramientas') }}">Herramientas</a></li>
+                        <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
+                    </ul>
+                </li>
+                <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
+                <div class="cierraMenu">
+                    <i class="fa fa-times"></i>
+                </div>
+                <span class="iconos">
+                    <a href="https://www.instagram.com/jardineriahernandez21?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </span>
+            </ul>
+            <div class="flecha">
+                <a href="javascript:history.back()">
+                    <figure>
+                        <img src="{{ url_for('static', filename='img/left-arrow-alt-regular-24.png') }}" alt="atrás" class="atras">
+                    </figure>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <article class="form__registro">
+               <form id="registro_form" method="POST" action="{{ url_for('registro') }}">
+                    <h2>Registrarse</h2>
+                    <input type="text" id="nom" name="nom" autocomplete="on" placeholder="Nombre" autofocus required>                   
+                    <br>
+                    <input type="text" id="ape" name="ape" autocomplete="on" placeholder="Apellido" required>
+                    <br>
+                    <input type="email" id="correo" name="correo" placeholder="Correo electrónico" required>
+                    <br>               
+                    <input type="password" id="passw" name="passw" placeholder="Contraseña" required>               
+                    <br>
+                    <input type="password" id="confirm_passw" name="confirm_passw" minlength="4" placeholder="Confirmar contraseña" required>
+                    <div class="regis">
+                        <input type="submit" value="Registrarse">
+                    </div>
+                    <div class="entrar_con">
+                        <p>O</p>
+                    </div>
+                    <div class="pagina">
+                        <h4>Continuar con</h4>
+                        <figure class="pag">
+                            <a href="https://www.icloud.com/" target="_blank">
+                                <i class="fab fa-apple"></i>
+                            </a>
+                            <a href="https://accounts.google.com/v3/signin/identifier?hl=es-419&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&service=mail&ec=GAlAFw&authuser=0&theme=mn&ddm=0&flowName=GlifWebSignIn&flowEntry=AddSession" target="_blank">
+                                <i class="fab fa-google"></i>
+                            </a>
+        </figure>
+    </div>  
+</form>
+
+            </article>
+    </main>
+
+    <footer class="footer">
+        <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/registro.js') }}"></script>
+</body>
+</html>

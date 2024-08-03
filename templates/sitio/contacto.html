@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contactos</title>
+    <meta name="description" content="Jardinería Hernández, transformando tu patio, contamos con una gran variedad de servicios...">
+    <meta name="keywords" content="Jardinería, Servicios de Jardinería, Plantas, Jardin">
+   <link rel="icon" href="{{ url_for('static', filename='img/CapturaLogo.JPG') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome-free-5.15.4-web/css/all.css') }}">
+</head>
+<body>
+<header>
+    <div class="logo1">
+        <figure class="logo__Empresa">
+            <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/CapturaLogo3.JPG') }}" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo"></a>
+        </figure>
+    </div>
+    <nav class="menu">
+        <!-- Menu-->  
+        <div class="abreMenu"><i class="fa fa-ellipsis-v"></i></div>
+       
+        <ul class="menu__superior">
+            <li class="menu__icono">
+                <div class="iconoBusqueda" alt="Buscar">
+                        <img src="{{ url_for('static', filename='img/search-alt-regular-36.png') }}" alt="lupa" class="icon buscarIcono">
+                        <div class="busqueda">
+                            <input type="text" placeholder="Buscar..." class="inputBuscar">
+                            <span class="limpiarBuscar"><strong>&times;</strong></span>
+                        </div>
+                    </div>
+                <a href="{{ url_for('carrito') }}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
+                <a href="{{ url_for('perfil') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+            </li>
+        </ul>
+      
+        <ul class="menu__horizontal">
+            <li class="menu__Empresa"><a href="{{ url_for('index') }}">Inicio</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('servicios') }}">Servicios</a>
+            </li>
+            <li class="menu__Empresa"><a href="{{ url_for('catalogo') }}">Productos</a>
+                <ul class="menu__vertical">
+                    <li><a href="{{ url_for('plantas') }}">Plantas</a></li>
+                    <li><a href="{{ url_for('fertilizantes') }}">Fertilizantes</a></li>
+                    <li><a href="{{ url_for('herramientas') }}">Herramientas</a></li>
+                    <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
+                </ul>
+            </li>
+            <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
+            <div class="cierraMenu"><i class="fa fa-times"></i></div>
+            <span class="iconos">
+                <!-- <i class="fab fa-facebook"></i> -->
+                <a href="https://www.instagram.com/jardineriahernandez21?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"><i class="fab fa-instagram"></i></a>
+                <!-- <i class="fab fa-twitter"></i>
+                <i class="fab fa-github"></i> -->
+            </span>
+        </ul>
+        <div class="flecha">
+            <a href="javascript:history.back()">
+            <figure>
+                <img src="{{ url_for('static', filename='img/left-arrow-alt-regular-24.png') }}" alt="atras" class="atras" >
+            </figure> 
+            </a>
+        </div>
+    </nav>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</header> 
+<main>
+    <section>
+        <article class="form__contacto">
+            <form action="{{ url_for('guardar_contacto') }}" method="post">
+                <h2>Contacta con nosotros</h2>
+
+                <!-- <input type="hidden" name="access_key" value="50ba27ea-5aad-40e5-8cca-0f62c8b7e7c1"> -->
+                <div class="cont">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                <br>
+                <div class="cont">
+                    <label for="email">Correo:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <br>
+                <div class="cont">
+                    <label for="num">Telefono o celular:</label>
+                    <input type="num" id="telefono" name="telefono" required>
+                </div>
+                <br>
+                <div class="mensaje">
+                    <label for="mensaje">Mensaje:</label>
+                    <textarea id="mensaje" name="mensaje" rows="4" required></textarea>
+                </div>
+                <br>
+                <div class="enviar">
+                    <input type="submit" value="Enviar">
+                </div>
+            </form>
+        </article>
+        
+        <article class="info">
+            <div class="informacion">
+                <figure class="contacta">
+                    <!-- <img src="imagenes/bx-envelope (1).svg" alt=""> -->
+                    <i class="fa fa-envelope"></i>
+                    <p><a href="https://accounts.google.com/" target="_blank">JardineriaHernandez@gmail.com</a></p>
+                </figure>
+                <figure class="contacta">
+                    <!-- <img src="imagenes/bx-map-alt.svg" alt=""> -->
+                    <i class="fa fa-map"></i>
+                    <p><a href="https://maps.app.goo.gl/7nVbD3bWcksxVwjA6" target="_blank">Santigo,Estrellasadhala</a></p>
+                </figure>
+                <figure class="contacta">
+                    <!-- <img src="imagenes/bxs-phone-call.svg" alt=""> -->
+                    <i class="fa fa-phone-volume"></i>
+                    <p><a href="tel:8498617224" target="_blank">849-861-7224</a></p>                
+                </figure>
+            </div>
+        </article>
+        <script src="https://smtpjs.com/v3/smtp.js"></script>
+        <script src="{{ url_for('static', filename='js/contacto.js') }}"></script>
+    </section>
+</main>
+    <footer class="footer">
+        <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,809 @@
+@font-face {
+    font-family: mifuenteMia;
+    src: url(../fuentes/CormorantGaramond-BoldItalic.ttf);
+}
+
+/* Recuerda hacer la lista de variables para los colores */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Cormorant Garamond;
+    text-decoration: none;
+}
+
+:root {
+    --verdePastel: #d5e4cf;
+    --verdeGrisaseo: #9ba79c;
+    --verdeGrisOscuro: #afc2ae;
+    --verdegris: #d5e4cf;
+    --crema: #fcf7ec;
+    --verdeMilitar: #273526;
+    --grisAzulado: #45627e;
+    --verdeMilitar: #6d8777;
+    --verdeClaro : #c0cfb2;
+    --verdeGris2: #e4e6d9;
+    --verdeClaro1: #b7f7c7;
+    --verdeclaro2: #9fdeaf;
+    --verdeClaro3: #87c598;
+    --verdeOscuro1: #6fac80;
+    --verdeOscuro2: #579368;
+    /* Colores que estaran en la lista de tal vez */
+    --quizas1: #3e7e55;
+    --quizas2: #7abd87;
+    --quizas3: #cadec8;
+    --quizas4: #eaeee5;
+}
+
+body {
+    background-color: #5E715E;
+}
+
+header {
+    margin-top: -25px;
+}
+
+/* header */
+
+.logo1 {
+    display: flex;
+    width: 0px;
+    height: 0px;
+    margin-left: 40px;
+}
+
+.logo {
+    width: 300px;
+    height: 150px;
+    margin-top: -18px;
+}
+
+.icon {
+    padding-top: 90px;
+    margin-top: -8px;
+}
+
+.menu {
+    display: block;
+    
+}
+
+nav {
+    margin: auto;
+    background: #5E715E;
+    font-size: 15px;
+    margin-top: -20px;
+    margin-bottom: 20px;
+}
+
+.menu__horizontal {
+    list-style: none;
+    display: flex;
+    text-transform: uppercase;
+    justify-content: center;
+}
+
+.menu__horizontal > li > a{
+    display: block;
+    padding: 15px 20px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.menu__horizontal > li:hover {
+    background-color: #6d8777;
+}
+
+.menu__vertical {
+    position: absolute;
+    display: none;
+    list-style: none;
+    width: 200px;
+    background-color: #9ba79c;
+    text-transform: none;
+    z-index: 2;
+}
+
+.menu__horizontal li:hover .menu__vertical {
+    display: block;
+}
+
+.menu__vertical li:hover {
+    background-color: #6d8777;
+}
+
+.menu__vertical li a {
+    display: block;
+    color: #dcdfdc;
+    padding: 10px 10px 10px 15px;
+    text-decoration: none;
+}
+
+.menu__superior {
+    margin: auto;
+    padding: auto;
+    display: flex;
+    justify-content: flex-end;
+    list-style: none;
+}
+
+.menu__icono {
+    margin-right: 40px;
+    padding-right: 20px;
+}
+
+.menu__Empresa {
+    margin-top: -47px;
+}
+
+.atras {
+    margin-left: 66px;
+    margin-bottom: -15px;
+}
+
+/* Main */
+
+/* Index */
+
+.contenedor {
+    width: 100%;
+    height: 600px;
+}
+
+.paredBlanca, .bancoJardin {
+    display: flex;
+    width: 90%;
+    height: 585px;
+    margin-left: -0.3%;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.paredBlanca {
+    position: relative;
+    display: inline-block;
+    /* text-align: center; */
+}
+
+.contenedor {
+    position: relative;
+    width: 100%;
+    max-width: 90%;
+    overflow: hidden;
+    margin-bottom: 10%;
+    margin-top: -11%;
+}
+  
+.efecto {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 600px;
+}
+  
+.efecto img {
+    width: 100%;
+    height: auto;
+}
+  
+.slide {
+    -webkit-animation-name: slide;
+    -webkit-animation-duration: 1.5s;
+    animation-name: slide;
+    animation-duration: 1.5s;
+}
+ 
+.contenedor, .texto_img {
+    color: #fff;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.texto_img {
+    font-size:x-large;
+    text-align: center;
+    width: 400px;
+}
+
+.texto_img {
+    background: #5e715ec7;
+    padding: 30px 70px 30px 70px;
+}
+
+.contenedor, .texto_enlace {
+    color: #fff;
+    position: absolute;
+    top: 85%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.texto_enlace {
+    font-size: xx-large;
+    border: 1px solid #fff;
+    padding: 20px;
+}
+
+.contendor img {
+    margin-right: 50%;
+    margin-top: 50%;
+}
+
+/* Esta linea de codigo es del nav */
+li img{
+    text-decoration: none;
+    /* float: left; */
+}
+
+/* Nosotros */
+
+.subTema {
+    text-align: center;
+    font-size: medium;
+    color: #070707;
+}
+
+.texto {
+    text-align: center;
+    padding: 5px;
+    color: #000000;
+    margin: 5px;
+}
+
+.nosotros {
+    display: flex;
+    background: #fff;
+    color: black;
+    width: 60%;
+    height: 90%;
+    margin-left: 21%;
+}
+
+.nosotrosImagen {
+    display: flex;
+    z-index: -2;
+    width: 810px;
+    height: 810px;
+}
+
+.nosotros section {
+    margin: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.subTema {
+    font-size: large;
+    color: #3e7e55;
+}
+
+.texto {
+    padding: 5px;
+}
+
+
+/* Perfil */
+
+.perfil {
+    text-align: center;
+}
+
+.fotoPerfil {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    padding: -20px 0 10px 0;
+}
+
+.nombre {
+    padding: 10px;
+}
+
+.infoPersonal {
+    display: flex;
+    align-items: flex-start;
+    column-count: 1;
+    margin: 5% 40% 0% 20%;
+    
+}
+
+.menu__perfil{
+    column-count: 1;
+    margin-left: 60%;
+}
+
+.desplegarPerfil {
+    margin-top: -21px;
+    padding: -15px;
+}
+.listaPerfil  {
+   list-style: none;
+}
+
+.listaPerfil a {
+    text-decoration: none;
+    color: #000000;
+}
+
+#contenedor {
+    background: #fff;
+    width: 60%;
+    height: 90%;
+    margin-left: 21%;
+    padding: 5% 0 5% 0;
+}
+
+/* editar perfil */
+
+.iconEditar {
+    z-index: 2;
+    margin-left: 15%;
+    margin-top: -20%;
+}
+
+.contenedorFormulario {
+    display: flex;
+}
+
+.formulario {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.formulario:nth-child(2) {
+    margin-left: 0px;
+}
+
+.formularioColumna {
+    margin-bottom: 20px;
+}
+
+.formularioColumna label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.formularioColumna input {
+    width: 80%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.formularioColumna select {
+    width: 80%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.formularioColumna textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* button {
+    display: flex;
+    justify-content: center;
+    margin-right: -100px;
+} */
+
+button {
+    padding: 8px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* .menu__desplegar {
+    /* display: flex; */
+    /* list-style: none;
+    column-count: 2;
+} */ 
+
+/*.menu__perfil {
+    /* display: flex;
+    align-items: flex-end; */
+    /* text-decoration: none; */
+    /* list-style: none; 
+}*/
+
+/* .nombre {
+    
+} */
+
+/* Pedidos y devolucion */
+
+.pedidoDevolucion {
+    list-style: none;
+    text-decoration: none;
+    display: flex;
+    justify-content: flex-start;
+    margin-left: 30px;
+    margin-top: -20px;
+}
+
+.pedido1, .devolucion {
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
+.pedido {
+    text-align: left;
+    margin-left: 38px;
+    margin-top: 10px;
+    border:1px solid #3e7e555b;
+    margin-right: 38px;
+}
+
+/* notificaciones */
+
+.notificacion {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.notificacion h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.notificacion ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.notificacion ul li {
+    margin-bottom: 5px;
+}
+
+.notificacion strong {
+    font-weight: bold;
+}
+
+.notificacion p {
+    margin-bottom: 10px;
+}
+
+.notificacion span {
+    color: #007bff; /* Color azul para resaltar los detalles */
+}
+
+/* pedidos */
+
+/* Estilos para el contenedor principal */
+#contenedor {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Estilos para la sección de perfil */
+.perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Estilos para la lista de pedidos y reclamaciones */
+.pedidoDevolucion {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 10px;
+}
+
+.pedidoDevolucion li {
+    flex: 1;
+}
+
+.pedidoDevolucion li a {
+    display: block;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background-color: #308845;
+    border-radius: 25px;
+}
+
+.pedidoDevolucion li a:hover {
+    background-color: #427e50;
+}
+
+.pedidos-container .pedido p {
+    margin: 5px 0;
+}
+
+.pedido {
+    background-color: #f0f0f0;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 700px;
+}
+
+.pedido p {
+    margin: 8px 0;
+}
+
+
+/* Estilos para los enlaces "Pedidos" y "Reclamaciones" */
+.pedidoDevolucion {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.pedidoDevolucion li {
+    margin: 0 10px;
+}
+
+.pedidoDevolucion a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
+}
+
+
+
+/* Efecto cerrar sesion emergente */ 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 300px;
+    text-align: center;
+}
+
+.imagen-cerrar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0 0 10px 0;
+    padding: 0px 0 15px 0;
+}
+
+.imagen-cerrar img {
+    border-radius: 50%;
+    height: 60px;
+}
+
+.botonCerrar {
+    display: flex;
+}
+
+.closeBtn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.closeBtn:hover, .closeBtn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.botonCerrar button {
+    background-color: var(--quizas1);
+    margin: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.botonCerrar button:hover {
+     background-color: var(--verdeOscuro2);
+}
+
+/* Buscador */
+
+/* CSS para el contenedor del icono de búsqueda */
+.iconoBusqueda {
+    position: relative;
+    display: inline-block;
+}
+
+/* CSS para el icono de búsqueda */
+.buscarIcono {
+    cursor: pointer;
+}
+
+/* CSS para el cuadro de búsqueda */
+.busqueda {
+    display: none;
+    position: absolute;
+    top: 83%;
+    left: -214px; /* Ajusta este valor según el tamaño del cuadro de búsqueda */
+    background: white;
+    padding: 4px;
+    border-radius: 50px;
+    white-space: nowrap;
+    width: 250px;
+    transform: translateY(-50%);
+    margin-right: -10px;
+    box-shadow: none;
+}
+
+/* CSS para mostrar el cuadro de búsqueda al hacer hover en el contenedor del icono de búsqueda */
+.iconoBusqueda:hover .busqueda {
+    display: block;
+}
+
+/* CSS para el campo de entrada en el cuadro de búsqueda */
+.busqueda input {
+    border-radius: 50px;
+    padding: 5px;
+    font-size: 14px;
+    width: 100%; /* Ajusta el tamaño del input */
+    margin-right: 10px;
+}
+
+/* .busqueda .inputBuscar {
+    border: #579368;
+    margin-right: 10px;
+} */
+
+/* CSS para el botón en el cuadro de búsqueda */
+.busqueda button {
+    padding: 3px 8px;
+    border: none;
+    background: #5e715e;
+    color: white;
+    cursor: pointer;
+    margin-left: -5%;
+}
+
+/* CSS para cambiar el color del botón al hacer hover */
+.busqueda button:hover {
+    background: #4a5b4a;
+}
+
+/* Estilos para el icono de limpiar */
+
+.iconoBusqueda {
+    border-radius: 4px;
+} 
+
+.buscarIcono {
+    opacity: 1; /* Opacidad reducida para el ícono de búsqueda */
+}
+
+.inputBuscar {
+    border: none;
+    flex: 1;
+    font-size: 14px;
+    padding: 8px;
+    outline: none;
+}
+
+.limpiarBuscar {
+    cursor: pointer;
+    font-size: 20px;
+    color: #666;
+    padding: 0 0px;
+    margin-left: -35px;
+}
+
+.limpiarBuscar:hover {
+    color: #666;
+}
+
+/* Ejemplo de regla CSS para mostrar el buscador cuando tiene la clase 'abierto' */
+.iconoBusqueda .busqueda {
+    display: none;
+}
+
+.iconoBusqueda.abierto .busqueda {
+    display: block;
+}
+
+/* footer */
+
+.footer_index {
+    position: relative;
+    padding: 20px;
+    margin-bottom: 2%;
+    margin-top: 50%;
+}
+
+footer {
+    /* position: relative; */
+    padding: 20px;
+    /* margin-bottom: 2%; */
+    /* margin-top: 50%; */
+}
+
+.texto__footer {
+    text-align: center;
+    color: #fff;
+}
+
+
+/* CSS for the slideshow */
+
+  
+@-webkit-keyframes slide {
+    from { opacity: .4 } 
+    to { opacity: 1 }
+}
+  
+@keyframes slide {
+    from { opacity: .4 } 
+    to { opacity: 1 }
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+  
+
+/* Responsive */
+
+@media screen and(min-width:1024px) {
+    
+}
+
+@media screen and(min-width: 768px) and(max-width: 1023px) {
+    
+}
+
+@media screen and(max-width:767px) {
+    
+}

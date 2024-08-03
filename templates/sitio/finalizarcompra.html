@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transacción Exitosa</title>
+    <meta name="description" content="Jardinería Hernández, transformando tu patio, contamos con una gran variedad de servicios...">
+    <meta name="keywords" content="Jardinería, Servicios de Jardinería, Plantas, Jardín">
+    <link rel="icon" href="{{ url_for('static', filename='img/iconoverde.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilosM.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo1">
+            <figure class="logo__Empresa">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='img/CapturaLogo3.JPG') }}" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo">
+                </a>
+            </figure>
+        </div>
+        <nav class="menu">
+            <!-- Menu -->
+            <ul class="menu__superior">
+                <li class="menu__icono">
+                    <div class="iconoBusqueda" alt="Buscar">
+                        <img src="{{ url_for('static', filename='img/search-alt-regular-36.png') }}" alt="lupa" class="icon buscarIcono">
+                        <div class="busqueda">
+                            <input type="text" placeholder="Buscar..." class="inputBuscar">
+                            <span class="limpiarBuscar"><strong>&times;</strong></span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('carrito') }}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
+                    <a href="{{ url_for('perfil') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+                </li>
+            </ul>
+            <ul class="menu__horizontal">
+                <li class="menu__Empresa"><a href="{{ url_for('index') }}">Inicio</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('servicio1') }}">Servicios</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('catalogo') }}">Productos</a>
+                    <ul class="menu__vertical">
+                        <li><a href="{{ url_for('plantas') }}">Plantas</a></li>
+                        <li><a href="{{ url_for('fertilizantes') }}">Fertilizantes</a></li>
+                        <li><a href="{{ url_for('herramientas') }}">Herramientas</a></li>
+                        <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
+                    </ul>
+                </li>
+                <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+                <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
+            </ul>
+            <div class="flecha">
+                <a href="javascript:history.back()">
+                    <figure>
+                        <img src="{{ url_for('static', filename='img/left-arrow-alt-regular-24.png') }}" alt="atras" class="atras">
+                    </figure> 
+                </a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <div class="success-icon">
+                <img class="check" src="{{ url_for('static', filename='img/Green-Check-PNG-Cutout.png') }}" alt="Check Icon">
+            </div>
+            <h2>Transacción exitosa</h2>
+            <p class="importe">Importe pagado</p>
+            <h3 id="importePagado">RD${{ importe_pagado }}</h3>
+            
+            <div class="account-info">
+                <p>No. Cuenta:</p>
+                <p class="account-number">{{ cuenta_numero }}</p>
+            </div>
+            <div class="card-info">
+                <p>No. Tarjeta:</p>
+                <p class="card-number" id="numeroTarjeta">**** **** **** {{ tarjeta_ultima }}</p>
+            </div>
+            <div class="card-info">
+                <p>No. Orden:</p>
+                <p class="card-number">{{ numero_orden }}</p>
+            </div>
+            <div class="date-info">
+                <p>Fecha:</p>
+                <p class="date" id="currentDate">{{ fecha_actual }}</p>
+            </div>
+            <div class="time-info">
+                <p>Hora:</p>
+                <p class="time" id="currentTime">{{ hora_actual }}</p>
+            </div>
+            <button class="continue-button" onclick="finalizarCompra()">Continuar</button>
+        </div>
+    </main>
+    <footer class="footer">
+        <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/finalizarcompra.js') }}"></script>
+</body>
+</html>
