@@ -1,51 +1,42 @@
 document.addEventListener("DOMContentLoaded", function() {
     const añadiralcarritoBtn = document.getElementById('añadiralcarritoBtn');
-    const procederPagoLink = document.getElementById('procederPagoLink'); // Enlace "Proceder al Pago"
-
-    // Agregar un listener al botón de agregar al carrito
-    if (añadiralcarritoBtn) {
-        añadiralcarritoBtn.addEventListener('click', function() {
-            // Obtener la información del producto específico
-            const producto = {
-                nombre: this.closest('.cuadro').querySelector('.nombre h2').textContent,
-                precio: parseFloat(this.closest('.cuadro').querySelector('.precio p').textContent.replace('Precio: RD$', '').trim()),
-                cantidad: parseInt(this.closest('.cuadro').querySelector('#cantidad').value),
-                imagen: this.closest('.cuadro').querySelector('.articulo img').getAttribute('src')
-            };
-
-            // Obtener el carrito actual desde el localStorage
-            let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-
-            // Verificar si el producto ya está en el carrito
-            let productoExistente = carrito.find(item => item.nombre === producto.nombre);
-
-            if (productoExistente) {
-                // Si el producto ya existe, incrementar la cantidad
-                productoExistente.cantidad += producto.cantidad;
-            } else {
-                // Si el producto no existe, agregarlo al carrito
-                carrito.push(producto);
-            }
-
-            // Guardar el carrito actualizado en el localStorage
-            localStorage.setItem('carrito', JSON.stringify(carrito));
-
-            // Notificar al usuario
-            alert("Producto agregado al carrito");
-
-            // Actualizar el carrito en la interfaz
-            actualizarCarrito();
-        });
-    }
-
+    const procederPagoLink = document.getElementById('procederPagoLink');
     const carritoContainer = document.getElementById('carritoContainer');
     const articulosSeleccionados = document.getElementById('articulosSeleccionados');
     const totalCarrito = document.getElementById('totalCarrito');
     const totalItebis = document.getElementById('totalItebis');
     const mensajeCarritoVacio = document.getElementById('mensajeCarritoVacio');
 
-    // Obtener el carrito desde el localStorage
     let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+    if (añadiralcarritoBtn) {
+        añadiralcarritoBtn.addEventListener('click', function() {
+            const producto = {
+                nombre: this.closest('.cuadro').querySelector('.nombre h2').textContent,
+                precio: parseFloat(this.closest('.cuadro').querySelector('.precio p').textContent.replace('Precio: RD$', '').trim()),
+                cantidad: parseInt(this.closest('.cuadro').querySelector('#cantidad').value),
+                imagen: this.closest('.cuadro').querySelector('.articulo img').getAttribute('src'),
+                cantidadDisponible: parseInt(this.closest('.cuadro').querySelector('.cantidad-control').dataset.cantidadDisponible)
+            };
+
+            let productoExistente = carrito.find(item => item.nombre === producto.nombre);
+
+            if (productoExistente) {
+                if (productoExistente.cantidad + producto.cantidad <= producto.cantidadDisponible) {
+                    productoExistente.cantidad += producto.cantidad;
+                } else {
+                    productoExistente.cantidad = producto.cantidadDisponible;
+                    alert("Se ha alcanzado la cantidad máxima disponible para este producto.");
+                }
+            } else {
+                carrito.push(producto);
+            }
+
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            alert("Producto agregado al carrito");
+            actualizarCarrito();
+        });
+    }
 
     function actualizarCarrito() {
         carritoContainer.innerHTML = '';
@@ -54,22 +45,19 @@ document.addEventListener("DOMContentLoaded", function() {
         let totalItebisCalculado = 0;
         let totalFinal = 0;
 
-        // Mostrar los productos en el carrito
         if (carrito.length === 0) {
-            // Mostrar mensaje de carrito vacío
             mensajeCarritoVacio.style.display = 'block';
             articulosSeleccionados.textContent = '0';
             totalCarrito.textContent = 'RD$0.00';
             totalItebis.textContent = 'RD$0.00';
-            return; // Salir de la función si el carrito está vacío
+            return;
         } else {
-            mensajeCarritoVacio.style.display = 'none'; // Ocultar mensaje de carrito vacío si no está vacío
+            mensajeCarritoVacio.style.display = 'none';
         }
 
         carrito.forEach((producto, index) => {
             const productoRow = document.createElement('tr');
             
-            // Calcular el ITBIS para este producto
             const itebis = producto.precio * producto.cantidad * 0.18;
             totalItebisCalculado += itebis;
 
@@ -85,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <td>RD$${producto.precio.toFixed(2)}</td>
                 <td>
                     <button class="cantidad-btn" data-action="decrease" data-index="${index}">-</button>
-                    <span>${producto.cantidad}</span>
+                    <span>${producto.cantidad}<span/>
                     <button class="cantidad-btn" data-action="increase" data-index="${index}">+</button>
                 </td>
                 <td>RD$${(producto.precio * producto.cantidad).toFixed(2)}</td>
@@ -93,38 +81,34 @@ document.addEventListener("DOMContentLoaded", function() {
                 <td><button class="eliminar-btn" data-index="${index}"><i class="fas fa-trash"></i></button></td>
             `;
 
-            productoRow.classList.add('producto-row'); // Clase para la fila del producto
-            productoRow.querySelector('.ctd-img').classList.add('ctd-img'); // Clase para la imagen del producto
+            productoRow.classList.add('producto-row');
+            productoRow.querySelector('.ctd-img').classList.add('ctd-img');
 
             carritoContainer.appendChild(productoRow);
 
-            // Calcular el total de productos y el precio total
             totalProductos += parseInt(producto.cantidad);
             totalPrecio += (producto.precio * producto.cantidad);
         });
 
         totalFinal = totalPrecio + totalItebisCalculado + 200;
 
-        // Actualizar los totales en la interfaz
         articulosSeleccionados.textContent = totalProductos;
         totalCarrito.textContent = `RD$${totalFinal.toFixed(2)}`;
         totalItebis.textContent = `RD$${totalItebisCalculado.toFixed(2)}`;
-        // Guardar totalFinal en el sessionStorage para ser utilizado en la página de pago
         sessionStorage.setItem('totalFinal', totalFinal.toFixed(2));
     }
 
-    // Función para modificar la cantidad de un producto
     function modificarCantidad(index, action) {
-        if (action === 'increase') {
-            carrito[index].cantidad++;
-        } else if (action === 'decrease' && carrito[index].cantidad > 1) {
-            carrito[index].cantidad--;
+        const producto = carrito[index];
+        if (action === 'increase' && producto.cantidad < producto.cantidadDisponible) {
+            producto.cantidad++;
+        } else if (action === 'decrease' && producto.cantidad > 1) {
+            producto.cantidad--;
         }
         localStorage.setItem('carrito', JSON.stringify(carrito));
         actualizarCarrito();
     }
 
-    // Añadir eventos a los botones de modificar cantidad
     carritoContainer.addEventListener('click', function(event) {
         if (event.target.classList.contains('cantidad-btn')) {
             const action = event.target.getAttribute('data-action');
@@ -133,14 +117,31 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Función para eliminar un producto del carrito
+    carritoContainer.addEventListener('change', function(event) {
+        if (event.target.classList.contains('cantidad-input')) {
+            const index = parseInt(event.target.getAttribute('data-index'));
+            const nuevaCantidad = parseInt(event.target.value);
+            const producto = carrito[index];
+            
+            if (nuevaCantidad >= 1 && nuevaCantidad <= producto.cantidadDisponible) {
+                producto.cantidad = nuevaCantidad;
+            } else if (nuevaCantidad < 1) {
+                producto.cantidad = 1;
+            } else {
+                producto.cantidad = producto.cantidadDisponible;
+            }
+            
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            actualizarCarrito();
+        }
+    });
+
     function eliminarProducto(index) {
         carrito.splice(index, 1);
         localStorage.setItem('carrito', JSON.stringify(carrito));
         actualizarCarrito();
     }
 
-    // Añadir eventos a los botones de eliminar
     carritoContainer.addEventListener('click', function(event) {
         if (event.target.closest('.eliminar-btn')) {
             const index = parseInt(event.target.closest('.eliminar-btn').getAttribute('data-index'));
@@ -148,16 +149,14 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Prevenir el acceso a la página de pago si el carrito está vacío
     if (procederPagoLink) {
         procederPagoLink.addEventListener('click', function(event) {
             if (carrito.length === 0) {
                 event.preventDefault();
                 alert("Tu carrito está vacío. No puedes proceder al pago.");
             } else {
-                // Crear la factura y guardarla en el localStorage
                 const factura = {
-                    numeroOrden: Math.floor(Math.random() * 100000), // Generar un número de orden aleatorio
+                    numeroOrden: Math.floor(Math.random() * 100000),
                     fecha: new Date().toLocaleDateString(),
                     hora: new Date().toLocaleTimeString(),
                     productos: carrito,
@@ -168,6 +167,5 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Inicializar la visualización del carrito
     actualizarCarrito();
 });
