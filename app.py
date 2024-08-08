@@ -1,9 +1,7 @@
 import os
-from flask import Flask, render_template, request, redirect, session, send_from_directory
+from flask import Flask, render_template, request, redirect, send_from_directory
 from flaskext.mysql import MySQL
-# from flask_mysqldb import MySQL
 from datetime import datetime
-import base64
 
 # Crear la aplicación
 app = Flask(__name__, template_folder='templates')
@@ -18,6 +16,9 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
 app.config['MYSQL_DATABASE_DB'] = 'jh'
 
+# Configurar la carpeta de subida
+app.config['UPLOAD_FOLDER'] = 'static/img'
+
 # Inicializar la aplicación
 mysql.init_app(app)
 
@@ -28,13 +29,12 @@ def generar_pagina_producto(idProducto):
     cursor.close()
 
     if producto:
-        idProducto, nombre, cantidad, categoria, precio, imagen_blob, descripcion = producto
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        idProducto, nombre, cantidad, categoria, subcategoria, precio, imagen_ruta, descripcion = producto
         producto_dict = {
             'idProducto': idProducto,
             'nombre': nombre,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         }
 
@@ -44,33 +44,36 @@ def generar_pagina_producto(idProducto):
 @app.route('/adminAGGProductos', methods=['GET', 'POST'])
 def adminAGGProductos():
     if request.method == 'POST':
-        try:
-            nombre = request.form['nombre']
-            cantidad = request.form['cantidad']
-            categoria = request.form['categoria']
-            precio = request.form['precio']
-            imagen = request.files['imagen'].read()
-            descripcion = request.form['descripcion']
+        nombre = request.form['nombre']
+        cantidad = request.form['cantidad']
+        categoria = request.form['categoria']
+        subcategoria = request.form.get('subcategoria', '')  # Puede no estar presente
+        precio = request.form['precio']
+        imagen = request.files['imagen']
+        descripcion = request.form['descripcion']
 
-            conn = mysql.connect()
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO producto (nombre, cantidad, categoria, precio, imagen, descripcion) VALUES (%s, %s, %s, %s, %s, %s)",
-                           (nombre, cantidad, categoria, precio, imagen, descripcion))
-            conn.commit()
-            idProducto = cursor.lastrowid
-            cursor.close()
-            conn.close()
+        # Guardar la imagen en la carpeta 'static/img'
+        imagen_ruta = os.path.join(app.config['UPLOAD_FOLDER'], imagen.filename)
+        imagen.save(imagen_ruta)
 
-            generar_pagina_producto(idProducto)
-            return redirect('/adminAGGProductos')
-        except Exception as e:
-            print(f"Error al agregar el producto: {e}")
-            return render_template('admin/adminAGGProductos.html', error="Error al agregar el producto. Por favor, intente nuevamente.")
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO producto (nombre, cantidad, categoria, subcategoria, precio, imagen, descripcion) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                       (nombre, cantidad, categoria, subcategoria, precio, imagen.filename, descripcion))
+        conn.commit()
+        idProducto = cursor.lastrowid
+        cursor.close()
+        conn.close()
+
+        generar_pagina_producto(idProducto)
+        return redirect('/adminAGGProductos')
     
-    cursor = mysql.get_db().cursor()
+    conn = mysql.connect()
+    cursor = conn.cursor()
     cursor.execute("SELECT * FROM producto")
     productos = cursor.fetchall()
     cursor.close()
+    conn.close()
 
     productos_con_imagenes = []
     for producto in productos:
@@ -78,19 +81,19 @@ def adminAGGProductos():
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]
+        precio = producto[5]
+        imagen_ruta = producto[6]
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
             'nombre': nombre,
             'cantidad': cantidad,
             'categoria': categoria,
+            'subcategoria': subcategoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
@@ -98,18 +101,13 @@ def adminAGGProductos():
 
 @app.route('/eliminarProducto/<int:idProducto>', methods=['POST'])
 def eliminarProducto(idProducto):
-    try:
-        conn = mysql.connect()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM producto WHERE idProducto = %s", (idProducto,))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return redirect('/adminAGGProductos')
-    except Exception as e:
-        print(f"Error al eliminar el producto: {e}")
-        return redirect('/adminAGGProductos', error="Error al eliminar el producto. Por favor, intente nuevamente.")
-
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM producto WHERE idProducto = %s", (idProducto,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return redirect('/adminAGGProductos')
 
 @app.route('/productos/<int:idProducto>')
 def producto(idProducto):
@@ -119,14 +117,14 @@ def producto(idProducto):
     cursor.close()
 
     if producto:
-        idProducto, nombre, cantidad, categoria, precio, imagen_blob, descripcion = producto
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        idProducto, nombre, cantidad, categoria, subcategoria, precio, imagen_ruta, descripcion = producto
         producto_dict = {
             'idProducto': idProducto,
             'nombre': nombre,
             'precio': precio,
-            'imagen': imagen_base64,
-            'descripcion': descripcion
+            'imagen': imagen_ruta,
+            'descripcion': descripcion,
+            'cantidad_disponible': cantidad
         }
         return render_template('sitio/producto_template.html', producto=producto_dict)
     else:
@@ -145,11 +143,10 @@ def catalogo():
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]  # no incluye subcategoria
+        precio = producto[5]
+        imagen_ruta = producto[6]  
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
@@ -157,7 +154,7 @@ def catalogo():
             'cantidad': cantidad,
             'categoria': categoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
@@ -176,19 +173,19 @@ def plantas():
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]  # Incluye subcategoria
+        precio = producto[5]
+        imagen_ruta = producto[6]  
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
             'nombre': nombre,
             'cantidad': cantidad,
             'categoria': categoria,
+            'subcategoria': subcategoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
@@ -207,19 +204,19 @@ def fertilizantes():
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]  # Incluye subcategoria
+        precio = producto[5]
+        imagen_ruta = producto[6]  
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
             'nombre': nombre,
             'cantidad': cantidad,
             'categoria': categoria,
+            'subcategoria': subcategoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
@@ -238,19 +235,19 @@ def herramientas():
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]  # Incluye subcategoria
+        precio = producto[5]
+        imagen_ruta = producto[6]  
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
             'nombre': nombre,
             'cantidad': cantidad,
             'categoria': categoria,
+            'subcategoria': subcategoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
@@ -269,62 +266,29 @@ def accesorios():
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]  # Incluye subcategoria
+        precio = producto[5]
+        imagen_ruta = producto[6]  
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
             'nombre': nombre,
             'cantidad': cantidad,
             'categoria': categoria,
+            'subcategoria': subcategoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
     return render_template('sitio/accesorios.html', productos=productos_con_imagenes)
 
 
-@app.route('/guardar_contacto', methods=['POST'])
-def guardar_contacto():
-    nombre = request.form['nombre']
-    correo = request.form['email']
-    telefono = request.form['telefono']
-    mensaje = request.form['mensaje']
-    fecha = datetime.now().strftime('%Y-%m-%d')
-    estado = 'Pendiente'  
-
-    cursor = mysql.connection.cursor()
-    cursor.execute('INSERT INTO contacto (nombre, correo, telefono, fecha, estado, mensaje) VALUES (%s, %s, %s, %s, %s, %s)', 
-               (nombre, correo, telefono, fecha, estado, mensaje))
-
-    mysql.connection.commit()
-    cursor.close()
-
-    return redirect('contacto')
-
-@app.route('/contacto')
-def contacto():
-    return render_template('sitio/contacto.html')
-
-@app.route('/registro', methods=['GET', 'POST'])
-def registro():
-    if request.method == 'POST':
-        return redirect('inicioSesion')
-    return render_template('sitio/registro.html')
-
-@app.route('/inicioSesion', methods=['GET', 'POST'])
-def inicioSesion():
-    if request.method == 'POST':
-        return redirect('index')
-    return render_template('sitio/inicioSesion.html')
-
-@app.route('/olvidarContrasena', methods=['GET', 'POST'])
-def olvidar_contrasena():
-    return render_template('sitio/olvidarContrasena.html')
+# Ruta para servir las imágenes
+@app.route('/static/img/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 # Ruta para el inicio
 @app.route('/')
@@ -354,10 +318,6 @@ def adminAccesorios():
 @app.route('/servicios')
 def servicios():
     return render_template('sitio/servicios.html')
-
-@app.route('/cerrarSesion')
-def cerrarSesion():
-    return render_template('sitio/cerrarSesion.html')
 
 @app.route('/carrito')
 def carrito():
@@ -402,6 +362,10 @@ def fertilizante7():
 @app.route('/fertilizante8')
 def fertilizante8():
     return render_template('sitio/fertilizante8.html')
+
+@app.route('/inicioSesion')
+def inicioSesion():
+    return render_template('sitio/inicioSesion.html')
 
 @app.route('/herramienta1')
 def herramienta1():
@@ -483,6 +447,10 @@ def procedePago():
 def agregarMetodoPago():
     return render_template('sitio/agregarMetodoPago.html')
 
+@app.route('/inicio_sesion')
+def inicio_sesion():
+    return render_template('sitio/inicio_sesion.html')
+
 @app.route('/metodoPago')
 def metodoPago():
     return render_template('sitio/metodoPago.html')
@@ -491,17 +459,21 @@ def metodoPago():
 def finalizarCompra():
     return render_template('sitio/finalizarCompra.html')
 
-@app.route('/infoPersonal')
-def infoPersonal():
-    return render_template('sitio/infoPersonal.html')
+@app.route('/contacto')
+def contacto():
+    return render_template('sitio/contacto.html')
+
+@app.route('/info_personal')
+def info_personal():
+    return render_template('sitio/info_personal.html')
 
 @app.route('/agregar_metodo_pago')
 def agregar_metodo_pago():
     return render_template('sitio/agregar_metodo_pago.html')
 
-@app.route('/cambiarContrasena')
-def cambiarContrasena():
-    return render_template('sitio/cambiarContrasena.html')
+@app.route('/cambiar_contrasena')
+def cambiar_contrasena():
+    return render_template('sitio/cambiar_contrasena.html')
 
 @app.route('/pedidos')
 def pedidos():
@@ -558,31 +530,6 @@ def planta6():
 @app.route('/planta7')
 def planta7():
     return render_template('sitio/planta7.html')
-
-
-# Ejemplo de cómo debería lucir tu función en app.py
-
-
-@app.route('/solicitarServicio.html')
-def solicitar_servicio():
-    servicio = request.args.get('servicio')
-    precio = request.args.get('precio')
-    return render_template('sitio/solicitarServicio.html', servicio=servicio, precio=precio)
-
-
-@app.route('/resultado')
-def resultado():
-    return render_template('sitio/resultado.html')
-
-
-@app.route('/procesarSolicitud', methods=['POST'])
-def procesarSolicitud():
-    # Captura de datos
-    nombre = request.form['nombre']
-    apellido = request.form['apellido']
-    # y así sucesivamente para otros campos
-    return render_template('resultado.html', nombre=nombre, apellido=apellido)
-        
 
 if __name__ == '__main__':
     app.run(debug=True)
