@@ -42,7 +42,7 @@
                     <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
                 </ul>
             </li>
-            <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('contactos') }}">Contacto</a></li>
             <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
         </ul>
         <div class="flecha">
@@ -58,7 +58,7 @@
         <div class="cuadro">
             <div>
                 <figure class="articulo">
-                    <img src="data:image/jpeg;base64,{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                    <img src="{{ url_for('static', filename='img/' + producto.imagen) }}" alt="{{ producto.nombre }}">
                 </figure>
             </div>
             <div class="descripcion">
@@ -76,9 +76,9 @@
                 </div>
                 <!-- Botón de compra -->
                 <span class="Cantidad-texto">Cantidad:</span>
-                <div class="cantidad-control">
+                <div class="cantidad-control" data-cantidad-disponible="{{ producto.cantidad_disponible }}">
                     <button class="cantidad-btn" id="decremento">-</button>
-                    <input type="number" id="cantidad" value="1" max="99" min="1">
+                    <input type="number" id="cantidad" value="1" min="1" max="{{ producto.cantidad_disponible }}">
                     <button class="cantidad-btn" id="incremento">+</button>
                 </div>
                 <br>

@@ -42,7 +42,7 @@
                     <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
                 </ul>
             </li>
-            <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('contactos') }}">Contacto</a></li>
             <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
         </ul>
         <div class="flecha">
@@ -61,58 +61,18 @@
                 <li><a href="#" class="desplegable-desplasado">Categorías</a></li>
                 <ul class="desplegable-menu" style="display: none;">
                     <li><a href="#" data-category="all">Relevancia</a></li>
-                    <li><a href="#" data-category="fertilizanteparaflores">Fertilizante para flores</a></li>
-                    <li><a href="#" data-category="vitaminaparaelsuelo">Vitaminas para el suelo</a></li>
-                    <li><a href="#" data-category="fertilizandederaiz">Fertilizante de raíces</a></li>
-                    <li><a href="#" data-category="vitaminasdecrecimiento">Vitaminas de crecimiento</a></li>
+                    <li><a href="#" data-category="Fertilizante para flores">Fertilizante para flores</a></li>
+                    <li><a href="#" data-category="Vitaminas para el suelo">Vitaminas para el suelo</a></li>
+                    <li><a href="#" data-category="Fertilizante de raices">Fertilizante de raíces</a></li>
+                    <li><a href="#" data-category="Vitaminas de crecimiento">Vitaminas de crecimiento</a></li>
                 </ul>
             </div>
             <br><br>
             <div class="M-productos">
-                <div class="M-producto" data-category="fertilizanteparaflores">
-                  <a href="{{ url_for('fertilizante1') }}"><img src="{{ url_for('static', filename='img/fertilizantecrecemas.jpg') }}" alt="Product 1"></a>
-                  <h2>Alimento para cactus</h2>
-                  <p class="M-precio-color">$313.00</p>
-                </div>
-                <div class="M-producto" data-category="vitaminaparaelsuelo">
-                  <a href="{{ url_for('fertilizante2') }}"><img src="{{ url_for('static', filename='img/fertilizantefoliar.jpg') }}" alt="Product 2"></a>
-                  <h2>Fertilizante foliar</h2>
-                  <p class="M-precio-color">$529.00</p>
-                </div>
-                <div class="M-producto" data-category="vitaminasdecrecimiento">
-                  <a href="{{ url_for('fertilizante3') }}"><img src="{{ url_for('static', filename='img/crecemas.jpg') }}" alt="Product 3"></a>
-                  <h2>Crece más</h2>
-                  <p class="M-precio-color">$330.00</p>
-                </div>
-                <div class="M-producto" data-category="fertilizanteparaflores">
-                    <a href="{{ url_for('fertilizante4') }}"><img src="{{ url_for('static', filename='img/crecemasactivador.jpg') }}" alt="Product 4"></a>
-                    <h2>Activador de flores</h2>
-                    <p class="M-precio-color">$310.00</p>
-                </div>
-                <div class="M-producto" data-category="fertilizanteparaflores">
-                    <a href="{{ url_for('fertilizante5') }}"><img src="{{ url_for('static', filename='img/crecemasorquideas.jpg') }}" alt="Product 5"></a>
-                    <h2>Alimento orquídeas</h2>
-                    <p class="M-precio-color">$355.00</p>
-                </div>
-                <div class="M-producto" data-category="fertilizandederaiz">
-                    <a href="{{ url_for('fertilizante6') }}"><img src="{{ url_for('static', filename='img/crecemasraices.jpg') }}" alt="Product 6"></a>
-                    <h2>Crece raíces</h2>
-                    <p class="M-precio-color">$293.00</p>
-                </div>
-                <div class="M-producto" data-category="vitaminaparaelsuelo">
-                    <a href="{{ url_for('fertilizante7') }}"><img src="{{ url_for('static', filename='img/nurish.jpg') }}" alt="Product 7"></a>
-                    <h2>Nurish</h2>
-                    <p class="M-precio-color">$107.00</p>
-                </div>
-                <div class="M-producto" data-category="vitaminaparaelsuelo">
-                    <a href="{{ url_for('fertilizante8') }}"><img src="{{ url_for('static', filename='img/nurish2.jpg') }}" alt="Product 8"></a>
-                    <h2>Nurish 3lb</h2>
-                    <p class="M-precio-color">$296.00</p>
-                </div>
                 {% for producto in productos %}
-                <div class="M-producto">
+                <div class="M-producto" data-category="{{ producto.subcategoria }}">
                     <a href="{{ url_for('producto', idProducto=producto.idProducto) }}">
-                        <img src="data:image/png;base64,{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                        <img src="{{ url_for('static', filename='img/' + producto.imagen) }}" alt="{{ producto.nombre }}">
                     </a>
                     <h2>{{ producto.nombre }}</h2>
                     <p class="M-precio-color">${{ producto.precio }}</p>

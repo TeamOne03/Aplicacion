@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alimento para orquídeas</title>
+    <meta name="description" content="Jardinería Hernández, transformando tu patio con una gran variedad de servicios y productos.">
+    <meta name="keywords" content="Jardinería, Servicios de Jardinería, Plantas, Jardín">
+    <link rel="icon" href="/static/img/iconoverde.png">
+    <link rel="stylesheet" href="/static/css/estilosM.css">
+</head>
+<body>
+    <header>
+    <div class="logo1">
+        <figure class="logo__Empresa">
+            <a href="/"><img src="/static/img/CapturaLogo3.JPG" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo"></a>
+        </figure>
+    </div>
+    <nav class="menu">
+            <!-- Menu-->
+        <ul class="menu__superior">
+            <li class="menu__icono">
+                <div class="iconoBusqueda" alt="Buscar">
+                    <img src="/static/img/search-alt-regular-36.png" alt="lupa" class="icon buscarIcono">
+                    <div class="busqueda">
+                        <input type="text" placeholder="Buscar..." class="inputBuscar">
+                        <span class="limpiarBuscar"><strong>&times;</strong></span>
+                    </div>
+                </div>
+                <a href="/carrito"><img src="/static/img/cart-alt-regular-36.png" alt="carrito" class="icon"></a>
+                <a href="/perfil"><img src="/static/img/user-circle-regular-36.png" alt="usuario" class="icon"></a>
+            </li>
+        </ul>
+        <ul class="menu__horizontal">
+            <li class="menu__Empresa"><a href="/">Inicio</a></li>
+            <li class="menu__Empresa"><a href="/servicios">Servicios</a></li>
+            <li class="menu__Empresa"><a href="/catalogo">Productos</a>
+                <ul class="menu__vertical">
+                    <li><a href="/plantas">Plantas</a></li>
+                    <li><a href="/fertilizantes">Fertilizantes</a></li>
+                    <li><a href="/herramientas">Herramientas</a></li>
+                    <li><a href="/accesorios">Accesorios</a></li>
+                </ul>
+            </li>
+            <li class="menu__Empresa"><a href="/contactos">Contacto</a></li>
+            <li class="menu__Empresa"><a href="/nosotros">Nosotros</a></li>
+        </ul>
+        <div class="flecha">
+            <a href="javascript:history.back()">
+            <figure>
+                <img src="/static/img/left-arrow-alt-regular-24.png" alt="atras" class="atras">
+            </figure>
+            </a>
+        </div>
+    </nav>
+    </header>
+    <main class="M-main">
+        <div class="cuadro">
+            <div>
+                <figure class="articulo">
+                    <img src="/static/img/crecemasorquideas.jpg" alt="Alimento para orquídeas">
+                </figure>
+            </div>
+            <div class="descripcion">
+                <div class="nombre">
+                    <h2>Alimento para orquídeas</h2>
+                </div>
+                <div class="precio">
+                    <p>Precio: RD$355</p>
+                </div>
+                <div class="disponibilidad">
+                    <p>Disponible</p>
+                </div>
+                <div class="acercade">
+                    <p>Logra que estén más sanas, activen nuevos brotes y desarrollen flores más grandes, coloridas y un follaje verde y hermoso. Importante recordar no excederse con el riego. Frecuencia: cada 20 días. Este alimento es adecuado para cualquier época del año.</p>
+                </div>
+                <!-- Botón de compra -->
+                <span class="Cantidad-texto">Cantidad:</span>
+                <div class="cantidad-control" data-cantidad-disponible="">
+                    <button class="cantidad-btn" id="decremento">-</button>
+                    <input type="number" id="cantidad" value="1" min="1" max="">
+                    <button class="cantidad-btn" id="incremento">+</button>
+                </div>
+                <br>
+                <div class="comprar">
+                    <button id="añadiralcarritoBtn" class="boton__comprar">Agregar al carrito</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="footer">
+        <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+    </footer>
+    <script src="/static/js/boton+-.js"></script>
+    <script src="/static/js/carrito.js"></script>
+</body>
+</html>

@@ -42,7 +42,7 @@
                     <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
                 </ul>
             </li>
-            <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('contactos') }}">Contacto</a></li>
             <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
         </ul>
         <div class="flecha">
@@ -61,60 +61,20 @@
                 <li><a href="#" class="desplegable-desplasado">Categorias</a></li>
                 <ul class="desplegable-menu" style="display: none;">
                     <li><a href="#" data-category="all">Relevancia</a></li>
-                    <li><a href="#" data-category="palas">Palas</a></li>
-                    <li><a href="#" data-category="mangueras">Mangueras</a></li>
-                    <li><a href="#" data-category="rastrillo">Rastrillos</a></li>
-                    <li><a href="#" data-category="tijeras">Tijeras</a></li>
-                    <li><a href="#" data-category="pistolademanguera">Pistolas de mangueras</a></li>
-                    <li><a href="#" data-category="arrancadordeyuyos">Arrancadores de yuyos</a></li>
+                    <li><a href="#" data-category="Palas">Palas</a></li>
+                    <li><a href="#" data-category="Mangueras">Mangueras</a></li>
+                    <li><a href="#" data-category="Rastrillos">Rastrillos</a></li>
+                    <li><a href="#" data-category="Tijeras">Tijeras</a></li>
+                    <li><a href="#" data-category="Pistolas de mangueras">Pistolas de mangueras</a></li>
+                    <li><a href="#" data-category="Arrancadores de yuyos">Arrancadores de yuyos</a></li>
                 </ul>
             </div>
             <br><br>
             <div class="M-productos">
-                <div class="M-producto" data-category="palas">
-                  <a href="{{ url_for('herramienta1') }}"><img src="{{ url_for('static', filename='img/palademadera.jpg') }}" alt="Product 1"></a>
-                  <h2>Pala de madera</h2>
-                  <p class="M-precio-color">$118.00</p>
-                </div>
-                <div class="M-producto" data-category="palas">
-                  <a href="{{ url_for('herramienta2') }}"><img src="{{ url_for('static', filename='img/palaancha.jpg') }}" alt="Product 2"></a>
-                  <h2>Pala ancha</h2>
-                  <p class="M-precio-color">$112.00</p>
-                </div>
-                <div class="M-producto" data-category="rastrillo">
-                  <a href="{{ url_for('herramienta3') }}"><img src="{{ url_for('static', filename='img/rrastrillo.webp') }}" alt="Product 3"></a>
-                  <h2>Rastrillo</h2>
-                  <p class="M-precio-color">$147.00</p>
-                </div>
-                <div class="M-producto" data-category="arrancadordeyuyos">
-                    <a href="{{ url_for('herramienta4') }}"><img src="{{ url_for('static', filename='img/arrancadordeyuyos.webp') }}" alt="Product 4"></a>
-                    <h2>Arrancador de yuyos</h2>
-                    <p class="M-precio-color">$92.00</p>
-                </div>
-                <div class="M-producto" data-category="mangueras">
-                    <a href="{{ url_for('producto1') }}"><img src="{{ url_for('static', filename='img/manguera.jpg') }}" alt="Product 5"></a>
-                    <h2>Manguera</h2>
-                    <p class="M-precio-color">$1,975.00</p>
-                </div>
-                <div class="M-producto" data-category="pistolademanguera">
-                    <a href="{{ url_for('herramienta5') }}"><img src="{{ url_for('static', filename='img/pistolademanguera.jpg') }}" alt="Product 6"></a>
-                    <h2>Pistola de manguera</h2>
-                    <p class="M-precio-color">$377.00</p>
-                </div>
-                <div class="M-producto" data-category="tijeras">
-                    <a href="{{ url_for('producto5') }}"><img src="{{ url_for('static', filename='img/tijerasStanley.jpg') }}" alt="Product 7"></a>
-                    <h2>Tijeras de jardin</h2>
-                    <p class="M-precio-color">$1275.00</p>
-                </div>
-                <div class="M-producto" data-category="palas">
-                  <a href="{{ url_for('accesorio3') }}"><img src="{{ url_for('static', filename='img/JUEGO-JARDIN-3-PIEZAS-M.MADERA-PALAS-RASTRILLO.jpg') }}" alt="Product 3"></a>
-                  <h2>Juego de jardin</h2>
-                  <p class="M-precio-color">$1416.00</p>
-                </div>
                 {% for producto in productos %}
-                <div class="M-producto">
+                <div class="M-producto" data-category="{{ producto.subcategoria }}">
                     <a href="{{ url_for('producto', idProducto=producto.idProducto) }}">
-                        <img src="data:image/png;base64,{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                        <img src="{{ url_for('static', filename='img/' + producto.imagen) }}" alt="{{ producto.nombre }}">
                     </a>
                     <h2>{{ producto.nombre }}</h2>
                     <p class="M-precio-color">${{ producto.precio }}</p>

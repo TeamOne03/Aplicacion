@@ -42,7 +42,7 @@
                     <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
                 </ul>
             </li>
-            <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('contactos') }}">Contacto</a></li>
             <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
         </ul>
         <div class="flecha">
@@ -61,57 +61,17 @@
                 <li><a href="#" class="desplegable-desplasado">Categorías</a></li>
                 <ul class="desplegable-menu" style="display: none;">
                     <li><a href="#" data-category="all">Relevancia</a></li>
-                    <li><a href="#" data-category="aromaticas">Plantas aromáticas</a></li>
-                    <li><a href="#" data-category="florales">Plantas florales</a></li>
-                    <li><a href="#" data-category="noflorales">Plantas no florales</a></li>
+                    <li><a href="#" data-category="Plantas aromaticas">Plantas aromáticas</a></li>
+                    <li><a href="#" data-category="Plantas florales">Plantas florales</a></li>
+                    <li><a href="#" data-category="Plantas no florales">Plantas no florales</a></li>
                 </ul>
             </div>
             <br><br>
             <div class="M-productos">
-                <div class="M-producto" data-category="florales">
-                    <a href="{{ url_for('planta1') }}"><img src="{{ url_for('static', filename='img/PLANTA-PETUNIA-LARGA-VIDA-2-.jpg') }}" alt="Product 1"></a>
-                    <h2>Petunia larga vida</h2>
-                    <p class="M-precio-color">$350.00</p>
-                </div>
-                <div class="M-producto" data-category="aromaticas">
-                    <a href="{{ url_for('planta2') }}"><img src="{{ url_for('static', filename='img/PLANTA-LAVANDA-2-.jpg') }}" alt="Product 2"></a>
-                    <h2>Lavanda</h2>
-                    <p class="M-precio-color">$475.00</p>
-                </div>
-                <div class="M-producto" data-category="noflorales">
-                    <a href="{{ url_for('planta3') }}"><img src="{{ url_for('static', filename='img/PLANTA-FICUS-ELASTICA-ROBUSTA-1-.jpg') }}" alt="Product 3"></a>
-                    <h2>Ficus elastica</h2>
-                    <p class="M-precio-color">$250.00</p>
-                </div>
-                <div class="M-producto" data-category="florales">
-                    <a href="{{ url_for('planta4') }}"><img src="{{ url_for('static', filename='img/PLANTA-ANTURIO-BLANCA.jpg') }}" alt="Product 4"></a>
-                    <h2>Anthurium blanca</h2>
-                    <p class="M-precio-color">$550.00</p>
-                </div>
-                <div class="M-producto" data-category="florales">
-                    <a href="{{ url_for('planta5') }}"><img src="{{ url_for('static', filename='img/Orquidea-morada.png') }}" alt="Product 5"></a>
-                    <h2>Orquídea morada</h2>
-                    <p class="M-precio-color">$1250.00</p>
-                </div>
-                <div class="M-producto" data-category="florales">
-                    <a href="{{ url_for('planta6') }}"><img src="{{ url_for('static', filename='img/KALANCHOE-2.png') }}" alt="Product 6"></a>
-                    <h2>Kalanchoe</h2>
-                    <p class="M-precio-color">$250.00</p>
-                </div>
-                <div class="M-producto" data-category="noflorales">
-                    <a href="{{ url_for('producto3') }}"><img src="{{ url_for('static', filename='img/planta.jpg') }}" alt="Product 7"></a>
-                    <h2>Planta</h2>
-                    <p class="M-precio-color">$375.00</p>
-                </div>
-                <div class="M-producto" data-category="florales">
-                    <a href="{{ url_for('planta7') }}"><img src="{{ url_for('static', filename='img/rosa-kordana.jpg') }}" alt="Product 8"></a>
-                    <h2>Rosas kordanas</h2>
-                    <p class="M-precio-color">$1500.00</p>
-                </div>
                 {% for producto in productos %}
-                <div class="M-producto">
+                <div class="M-producto" data-category="{{ producto.subcategoria }}">
                     <a href="{{ url_for('producto', idProducto=producto.idProducto) }}">
-                        <img src="data:image/png;base64,{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                        <img src="{{ url_for('static', filename='img/' + producto.imagen) }}" alt="{{ producto.nombre }}">
                     </a>
                     <h2>{{ producto.nombre }}</h2>
                     <p class="M-precio-color">${{ producto.precio }}</p>

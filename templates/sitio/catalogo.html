@@ -42,7 +42,7 @@
                     <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
                 </ul>
             </li>
-            <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('contactos') }}">Contacto</a></li>
             <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
         </ul>
         <div class="flecha">
@@ -58,70 +58,10 @@
         <section class="M-catalogo">
             <h3 class="text-i">Más vendidos</h3>
             <div class="M-productos">
-                <div class="M-producto">
-                    <a href="{{ url_for('producto1') }}"><img class="extendidas" src="{{ url_for('static', filename='img/mangueraVerde.jpg') }}" alt="Manguera"></a>
-                    <h2>Manguera</h2>
-                    <p class="M-precio-color">$1,975.00</p>
-                </div>
-                <div class="M-producto">
-                    <a href="{{ url_for('producto2') }}"><img class="extendidas" src="{{ url_for('static', filename='img/abono.png') }}" alt="Abono"></a>
-                    <h2>Abono</h2>
-                    <p class="M-precio-color">$500.00</p>
-                </div>
-                <div class="M-producto">
-                    <a href="{{ url_for('producto3') }}"><img src="{{ url_for('static', filename='img/planta.jpg') }}" alt="Planta"></a>
-                    <h2>Planta</h2>
-                    <p class="M-precio-color">$375.00</p>
-                </div>
-                <div class="M-producto">
-                    <a href="{{ url_for('producto4') }}"><img class="extendidas" src="{{ url_for('static', filename='img/pulverizador12.jpg') }}" alt="Pulverizador"></a>
-                    <h2>Pulverizador</h2>
-                    <p class="M-precio-color">$500.00</p>
-                </div>
-                <div class="M-producto">
-                    <a href="{{ url_for('producto5') }}"><img src="{{ url_for('static', filename='img/tijerasStanley.jpg') }}" alt="Tijeras de jardín"></a>
-                    <h2>Tijeras de jardín</h2>
-                    <p class="M-precio-color">$1275.00</p>
-                </div>
-                <div class="M-producto">
-                    <a href="{{ url_for('producto6') }}"><img class="extendidas" src="{{ url_for('static', filename='img/podadora-de-cesped.webp') }}" alt="Podadora de césped"></a>
-                    <h2>Podadora de césped</h2>
-                    <p class="M-precio-color">$6350.00</p>
-                </div>
-                <div class="M-producto">
-                    <a href="{{ url_for('producto7') }}"><img src="{{ url_for('static', filename='img/maceta.jpg') }}" alt="Maceta"></a>
-                    <h2>Maceta</h2>
-                    <p class="M-precio-color">$299.00</p>
-                </div>
-                <div class="M-producto">
-                    <a href="{{ url_for('planta3') }}"><img src="{{ url_for('static', filename='img/PLANTA-FICUS-ELASTICA-ROBUSTA-1-.jpg') }}" alt="Ficus elastica"></a>
-                    <h2>Ficus elastica</h2>
-                    <p class="M-precio-color">$250.00</p>
-                </div>
-                <div class="M-producto">
-                    <a href="{{ url_for('accesorio1') }}"><img src="{{ url_for('static', filename='img/aspersor.jpg') }}" alt="Aspersor"></a>
-                    <h2>Aspersor</h2>
-                    <p class="M-precio-color">$500.00</p>
-                </div>
-                <div class="M-producto">
-                    <a href="{{ url_for('fertilizante5') }}"><img src="{{ url_for('static', filename='img/crecemasorquideas.jpg') }}" alt="Alimento para orquídeas"></a>
-                    <h2>Alimento para orquídeas</h2>
-                    <p class="M-precio-color">$355.00</p>
-                </div>
-                <div class="M-producto">
-                    <a href="{{ url_for('accesorio5') }}"><img src="{{ url_for('static', filename='img/Matera-Redonda-Cemento.jpg') }}" alt="Maceta de cemento"></a>
-                    <h2>Maceta de cemento</h2>
-                    <p class="M-precio-color">$1500.00</p>
-                </div>
-                <div class="M-producto">
-                    <a href="{{ url_for('herramienta1') }}"><img src="{{ url_for('static', filename='img/palademadera.jpg') }}" alt="Pala de madera"></a>
-                    <h2>Pala de madera</h2>
-                    <p class="M-precio-color">$118.00</p>
-                </div>
                 {% for producto in productos %}
-                <div class="M-producto">
+                <div class="M-producto" data-category="{{ producto.categoria }}">
                     <a href="{{ url_for('producto', idProducto=producto.idProducto) }}">
-                        <img src="data:image/png;base64,{{ producto.imagen }}" alt="{{ producto.nombre }}">
+                        <img src="{{ url_for('static', filename='img/' + producto.imagen) }}" alt="{{ producto.nombre }}">
                     </a>
                     <h2>{{ producto.nombre }}</h2>
                     <p class="M-precio-color">${{ producto.precio }}</p>

@@ -11,48 +11,48 @@
 </head>
 <body>
     <header>
-        <div class="logo1">
-            <figure class="logo__Empresa">
-                <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/CapturaLogo3.JPG') }}" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo"></a>
-            </figure>
-        </div>
-        <nav class="menu">
+    <div class="logo1">
+        <figure class="logo__Empresa">
+            <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/CapturaLogo3.JPG') }}" alt="Logo de la Jardinería Hernández" title="Logo de la Jardinería Hernández" class="logo"></a>
+        </figure>
+    </div>
+    <nav class="menu">
             <!-- Menu-->
-            <ul class="menu__superior">
-                <li class="menu__icono">
-                    <div class="iconoBusqueda" alt="Buscar">
-                        <img src="{{ url_for('static', filename='img/search-alt-regular-36.png') }}" alt="lupa" class="icon buscarIcono">
-                        <div class="busqueda">
-                            <input type="text" placeholder="Buscar..." class="inputBuscar">
-                            <span class="limpiarBuscar"><strong>&times;</strong></span>
-                        </div>
+        <ul class="menu__superior">
+            <li class="menu__icono">
+                <div class="iconoBusqueda" alt="Buscar">
+                    <img src="{{ url_for('static', filename='img/search-alt-regular-36.png') }}" alt="lupa" class="icon buscarIcono">
+                    <div class="busqueda">
+                        <input type="text" placeholder="Buscar..." class="inputBuscar">
+                        <span class="limpiarBuscar"><strong>&times;</strong></span>
                     </div>
-                    <a href="{{ url_for('carrito') }}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
-                    <a href="{{ url_for('inicioSesion') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
-                </li>
-            </ul>
-            <ul class="menu__horizontal">
-                <li class="menu__Empresa"><a href="{{ url_for('index') }}">Inicio</a></li>
-                <li class="menu__Empresa"><a href="{{ url_for('servicio1') }}">Servicios</a></li>
-                <li class="menu__Empresa"><a href="{{ url_for('catalogo') }}">Productos</a>
-                    <ul class="menu__vertical">
-                        <li><a href="{{ url_for('plantas') }}">Plantas</a></li>
-                        <li><a href="{{ url_for('fertilizantes') }}">Fertilizantes</a></li>
-                        <li><a href="{{ url_for('herramientas') }}">Herramientas</a></li>
-                        <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
-                    </ul>
-                </li>
-                <li class="menu__Empresa"><a href="{{ url_for('contacto') }}">Contacto</a></li>
-                <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
-            </ul>
-            <div class="flecha">
-                <a href="javascript:history.back()">
-                <figure>
-                    <img src="{{ url_for('static', filename='img/left-arrow-alt-regular-24.png') }}" alt="atras" class="atras">
-                </figure> 
-                </a>
-            </div>
-        </nav>
+                </div>
+                <a href="{{ url_for('carrito') }}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
+                <a href="{{ url_for('perfil') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+            </li>
+        </ul>
+        <ul class="menu__horizontal">
+            <li class="menu__Empresa"><a href="{{ url_for('index') }}">Inicio</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('servicios') }}">Servicios</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('catalogo') }}">Productos</a>
+                <ul class="menu__vertical">
+                    <li><a href="{{ url_for('plantas') }}">Plantas</a></li>
+                    <li><a href="{{ url_for('fertilizantes') }}">Fertilizantes</a></li>
+                    <li><a href="{{ url_for('herramientas') }}">Herramientas</a></li>
+                    <li><a href="{{ url_for('accesorios') }}">Accesorios</a></li>
+                </ul>
+            </li>
+            <li class="menu__Empresa"><a href="{{ url_for('contactos') }}">Contacto</a></li>
+            <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
+        </ul>
+        <div class="flecha">
+            <a href="javascript:history.back()">
+            <figure>
+                <img src="{{ url_for('static', filename='img/left-arrow-alt-regular-24.png') }}" alt="atras" class="atras">
+            </figure>
+            </a>
+        </div>
+    </nav>
     </header>
     <main>
         <div class="container-pago">
