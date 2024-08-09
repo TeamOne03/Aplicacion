@@ -31,8 +31,12 @@
                             <span class="limpiarBuscar"><strong>&times;</strong></span>
                         </div>
                     </div>
-                <a href="{{ url_for('carrito') }}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
-                <a href="{{ url_for('perfil') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+                <a href="{{ url_for('carrito') }}" alt="Carrito de compras">
+                    <img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon">
+                </a>
+                <a href="{{ url_for('inicioSesion') }}" alt="Iniciar sesión">
+                    <img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon">
+                </a>
             </li>
         </ul>
           
@@ -52,10 +56,7 @@
             <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
             <div class="cierraMenu"><i class="fa fa-times"></i></div>
             <span class="iconos">
-                <!-- <i class="fab fa-facebook"></i> -->
                 <a href="https://www.instagram.com/jardineriahernandez21?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"><i class="fab fa-instagram"></i></a>
-                <!-- <i class="fab fa-twitter"></i>
-                <i class="fab fa-github"></i> -->
             </span>
         </ul>
         <div class="flecha">
@@ -81,8 +82,8 @@
                 <br>
                 <div class="pass1">
                     <i class="fa fa-key"></i>
-                    <input type="password" id="pass" name="pass" placeholder="Contraseña" required>
-                    <span class="eye" onclick="myFuntion()">
+                    <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña" required>
+                    <span class="eye" onclick="myFunction()">
                         <i id="ocultar" class="fa fa-eye"></i>
                         <i id="ocultar2" class="fa fa-eye-slash"></i>
                     </span>
@@ -113,10 +114,10 @@
 
         </article>
     </section>
-    <script src="{{ url_for('static', filename='js/longin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 </main>
-        <footer class="footer">
-            <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
-        </footer>
+<footer class="footer">
+    <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+</footer>
 </body>
 </html>
