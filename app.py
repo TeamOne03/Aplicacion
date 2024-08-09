@@ -1,9 +1,12 @@
 import os
-from flask import Flask, render_template, request, redirect, session, send_from_directory
-from flaskext.mysql import MySQL
-# from flask_mysqldb import MySQL
+from flask import Flask, render_template, request, redirect, session
+# from flaskext.mysql import MySQL
+from flask_mysqldb import MySQL
 from datetime import datetime
 import base64
+from werkzeug.security import generate_password_hash, check_password_hash
+import pymysql
+import MySQLdb
 
 # Crear la aplicación
 app = Flask(__name__, template_folder='templates')
@@ -310,26 +313,63 @@ def guardar_contacto():
 def contacto():
     return render_template('sitio/contacto.html')
 
+
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
     if request.method == 'POST':
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        correo = request.form['correo']
+        contrasena = request.form['contrasena']
+        confirmarContrasena = request.form['confirmarContrasena']
+        
+        # hashed_password = generate_password_hash(contrasena, method='sha256')
+        hashed_password = generate_password_hash(contrasena, method='pbkdf2:sha256')
+
+        rol = 'usuario'
+        
+        conn = mysql.connect()
+        # conn = MySQLdb.connect()
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO usuario (idUsuario, nombre, apellido, correo, contrasena, rol) VALUES (NULL, %s, %s, %s, %s, %s)', (nombre, apellido, correo, hashed_password, rol))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
         return redirect('inicioSesion')
+    
     return render_template('sitio/registro.html')
 
 @app.route('/inicioSesion', methods=['GET', 'POST'])
 def inicioSesion():
     if request.method == 'POST':
-        return redirect('index')
+        correo = request.form['correo']
+        contrasena = request.form['contrasena']
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM usuario WHERE correo = %s", (correo,))
+        usuario = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if usuario and check_password_hash(usuario[4], contrasena):  # La contraseña es la columna 4
+            session['correo'] = correo
+            return redirect('/')
+        else:
+            return render_template('sitio/index.html', error='Correo o contraseña incorrectos')
+
     return render_template('sitio/inicioSesion.html')
 
-@app.route('/olvidarContrasena', methods=['GET', 'POST'])
-def olvidar_contrasena():
-    return render_template('sitio/olvidarContrasena.html')
-
-# Ruta para el inicio
 @app.route('/')
 def index():
     return render_template('sitio/index.html')
+
+#---------------------------------------------------------------------------
+
+@app.route('/olvidarContrasena', methods=['GET', 'POST'])
+def olvidarContrasena():
+    return render_template('sitio/olvidarContrasena.html')
 
 @app.route('/producto_template')
 def producto_template():
