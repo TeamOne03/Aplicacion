@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('cotizacionData', JSON.stringify(data));
         localStorage.setItem('total', total);
 
-        window.location.href = 'resultado.html';
+        window.location.href = '/resultado';
     });
 
     const checkboxes = document.querySelectorAll('#servicios-adicionales input[type="checkbox"]');
