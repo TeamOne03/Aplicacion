@@ -107,6 +107,17 @@ CREATE TABLE `producto` (
 --
 
 CREATE TABLE `servicio` (
+  `idServicio` int(8) NOT NULL AUTO_INCREMENT,
+  `tipo` varchar(30) NOT NULL,
+  `precio` int(30) NOT NULL,
+  `descripcion` text NOT NULL,
+  `fechaSolicitud` date NOT NULL,
+  `idCliente` int(8) NOT NULL,
+  PRIMARY KEY (`idServicio`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+
+CREATE TABLE `servicio` (
   `idServicio` int(8) NOT NULL,
   `tipo` varchar(30) NOT NULL,
   `precio` int(30) NOT NULL,

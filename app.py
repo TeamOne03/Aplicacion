@@ -1,9 +1,8 @@
 import os
 from flask import Flask, render_template, request, redirect, session, send_from_directory
-from flaskext.mysql import MySQL
-# from flask_mysqldb import MySQL
+# from flaskext.mysql import MySQL
+from flask_mysqldb import MySQL
 from datetime import datetime
-import base64
 
 # Crear la aplicación
 app = Flask(__name__, template_folder='templates')
@@ -18,7 +17,7 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
 app.config['MYSQL_DATABASE_DB'] = 'jh'
 
-# Inicializar la aplicación
+# Inicializar la extensión MySQL
 mysql.init_app(app)
 
 def generar_pagina_producto(idProducto):
@@ -295,14 +294,22 @@ def guardar_contacto():
     telefono = request.form['telefono']
     mensaje = request.form['mensaje']
     fecha = datetime.now().strftime('%Y-%m-%d')
-    estado = 'Pendiente'  
+    estado = 'Pendiente'
 
-    cursor = mysql.connection.cursor()
+    # Crear un cursor para la conexión a la base de datos
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Ejecutar la consulta SQL
     cursor.execute('INSERT INTO contacto (nombre, correo, telefono, fecha, estado, mensaje) VALUES (%s, %s, %s, %s, %s, %s)', 
-               (nombre, correo, telefono, fecha, estado, mensaje))
+                   (nombre, correo, telefono, fecha, estado, mensaje))
 
-    mysql.connection.commit()
+    # Commit los cambios
+    conn.commit()
+
+    # Cerrar el cursor y la conexión
     cursor.close()
+    conn.close()
 
     return redirect('contacto')
 
@@ -560,15 +567,64 @@ def planta7():
     return render_template('sitio/planta7.html')
 
 
-# Ejemplo de cómo debería lucir tu función en app.py
 
 
-@app.route('/solicitarServicio.html')
+@app.route('/solicitarServicio.html', methods=['GET', 'POST'])
 def solicitar_servicio():
-    servicio = request.args.get('servicio')
-    precio = request.args.get('precio')
-    return render_template('sitio/solicitarServicio.html', servicio=servicio, precio=precio)
+    if request.method == 'POST':
+        # Obtiene los datos del formulario
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        celular = request.form['celular']
+        correo = request.form['correo']
+        servicio = request.form['proyecto']
+        requerimiento = request.form['requerimiento']
+        fecha = request.form['fecha']
+        servicios_adicionales = request.form.getlist('servicios[]')
 
+        # Lógica para calcular el precio total
+        precio = calcular_precio(servicios_adicionales)
+
+        # Ejemplo de obtención del idCliente (puedes ajustarlo según tu lógica)
+        idCliente = obtener_id_cliente(correo)  # función para obtener el ID del cliente según el correo
+
+        # Inserta los datos en la base de datos
+        cur = mysql.connection.cursor()
+        cur.execute(
+            "INSERT INTO servicio (tipo, precio, descripcion, fechaSolicitud, idCliente) "
+            "VALUES (%s, %s, %s, %s, %s)",
+            (servicio, precio, requerimiento, fecha, idCliente)
+        )
+        mysql.connection.commit()
+        cur.close()
+
+        return redirect(url_for('index'))  # Redirige a la página principal o a donde desees
+    
+    return render_template('sitio/solicitarServicio.html')
+
+def calcular_precio(servicios):
+    precios = {
+        "Mantenimiento": 2000,
+        "Diseños de jardines": 2500,
+        "Poda de planta": 1500,
+        "Abonado": 1000,
+        "Sistema de detección de plagas": 2500,
+        "Tratamiento fitosanitario": 3000,
+        "Eliminación de mala hierbas": 1000,
+        "Revisión de sistema de riego": 3500,
+        "Césped artificial": 400,
+        "Control y programación de riego": 3500,
+    }
+    total = sum(precios.get(servicio, 0) for servicio in servicios)
+    return total
+
+def obtener_id_cliente(correo):
+    # Ejemplo de cómo podrías obtener el idCliente desde la base de datos usando el correo
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT idCliente FROM clientes WHERE correo = %s", [correo])
+    cliente = cur.fetchone()
+    cur.close()
+    return cliente[0] if cliente else None
 
 @app.route('/resultado')
 def resultado():
@@ -580,9 +636,11 @@ def procesarSolicitud():
     # Captura de datos
     nombre = request.form['nombre']
     apellido = request.form['apellido']
-    # y así sucesivamente para otros campos
     return render_template('resultado.html', nombre=nombre, apellido=apellido)
-        
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
