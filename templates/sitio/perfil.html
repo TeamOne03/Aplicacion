@@ -26,8 +26,12 @@
                             <span class="limpiarBuscar"><strong>&times;</strong></span>
                         </div>
                     </div>
-                    <a href="{{ url_for('carrito')}}"><img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon"></a>
-                    <a href="{{ url_for('inicioSesion') }}"><img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon"></a>
+                    <a href="{{ url_for('carrito')}}" alt="Carrito de compras">
+                        <img src="{{ url_for('static', filename='img/cart-alt-regular-36.png') }}" alt="carrito" class="icon">
+                    </a>
+                    <a href="{{ url_for('inicioSesion') }}" alt="Iniciar sesión">
+                        <img src="{{ url_for('static', filename='img/user-circle-regular-36.png') }}" alt="usuario" class="icon">
+                    </a>
                     <i class="fa-thin fa-circle-user" style="color: #fff;"></i>
                 </li>
             </ul>
