@@ -72,116 +72,119 @@
 <main>
     <section>
         <article class="formulario__cotizar">
-            <form id="cotizacionForm" method="post" action="{{ url_for('procesarSolicitud') }}">
-                <h1>Solicitar servicio</h1>
-                <div class="cotizar_reponsi">
-                    <div class="campos">
-                        <label for="fecha">Fecha actual:</label>
-                        <input type="date" id="fecha" name="fecha" min="" required>
-                    </div>
-                    <div class="campos">
-                        <label for="nombre">Nombre:</label>
-                        <input type="text" id="nombre" name="nombre" required>
-                    </div>
-                    <div class="campos">
-                        <label for="apellido">Apellido:</label>
-                        <input type="text" id="apellido" name="apellido" required>
-                    </div>
-                    <div class="campos">
-                        <label for="celular">Celular:</label>
-                        <input type="tel" id="celular" name="celular" required>
-                    </div>
-                    <div class="campos">
-                        <label for="correo">Correo:</label>
-                        <input type="email" id="correo" name="correo" required>
-                    </div>
-                    <div class="campos">
-                        <label for="proyecto">Servicio a realizar:</label>
-                        <input type="text" id="proyecto" name="proyecto" readonly>
-                        <input type="hidden" id="precioInicial" name="precioInicial">
-                    </div>
-                </div>
-                <details>
-                    <summary>Seleccionar servicios adicionales</summary>
-                    <div class="form-grupo" id="servicios-adicionales">
-                        <label for="servicios">¿Desea seleccionar servicios adicionales?:</label>
-                        <div class="checkbox-grupo">
-                            <div class="columna">
-                                <div class="grupo">
-                                    <input type="checkbox" name="servicios[]" value="Mantenimiento" data-precio="2000" id="check1">
-                                    <label for="check1"> Mantenimiento <br> <span>RD$2,000.00</span></label>
-                                </div>
-
-                                <div class="grupo">
-                                    <input type="checkbox" name="servicios[]" value="Diseños de jardines" data-precio="2500" id="check2">
-                                    <label for="check2"> Diseños de jardines <br> <span>RD$2,500.00</span></label>
-                                </div>
-
-                                <div class="grupo">
-                                    <input type="checkbox" name="servicios[]" value="Poda de planta" data-precio="1500" id="check3">
-                                    <label for="check3"> Poda de planta <br> <span>RD$1,500.00</span></label>
-                                </div>
-
-                                <div class="grupo">
-                                    <input type="checkbox" name="servicios[]" value="Abonado" data-precio="1000" id="check4">
-                                    <label for="check4"> Abonado <br> <span>RD$1,000.00</span></label>
-                                </div>
-
-                                <div class="grupo">
-                                    <input type="checkbox" name="servicios[]" value="Sistema de detección de plagas" data-precio="2500" id="check5">
-                                    <label for="check5"> Sistema de detección de plagas <br> <span>RD$2,500.00</span></label>
-                                </div>
-                            </div>
-                            <div class="columna">
-                                <div class="grupo">
-                                    <input type="checkbox" name="servicios[]" value="Tratamiento fitosanitario" data-precio="3000" id="check6">
-                                    <label for="check6"> Tratamiento fitosanitario <br> <span>RD$3,000.00</span></label>
-                                </div>
-
-                                <div class="grupo">
-                                    <input type="checkbox" name="servicios[]" value="Eliminación de mala hierbas" data-precio="1000" id="check7">
-                                    <label for="check7"> Eliminación de mala hierbas <br> <span>RD$1,000.00</span></label>
-                                </div>
-
-                                <div class="grupo">
-                                    <input type="checkbox" name="servicios[]" value="Revisión de sistema de riego" data-precio="3500" id="check8">
-                                    <label for="check8"> Revisión de sistema de riego <br> <span>RD$3,500.00</span></label>
-                                </div>
-
-                                <div class="grupo">
-                                    <input type="checkbox" name="servicios[]" value="Césped artificial" data-precio="400" id="check9">
-                                    <label for="metros_cesped">Césped artificial <br> <span>RD$400.00</span></label>
-                                </div> 
+    <form id="cotizacionForm" method="post" action="{{ url_for('solicitar_servicio') }}">
+        <h1>Solicitar servicio</h1>
+        <div class="cotizar_reponsi">
+            <div class="campos">
+                <label for="fecha">Fecha actual:</label>
+                <input type="date" id="fecha" name="fecha" min="" required>
+            </div>
+            <div class="campos">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="campos">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" required>
+            </div>
+            <div class="campos">
+                <label for="telefono">Celular:</label>
+                <input type="tel" id="telefono" name="telefono" required>
+            </div>
+            <div class="campos">
+                <label for="correo">Correo:</label>
+                <input type="email" id="correo" name="correo" required>
+            </div>
+            <div class="campos">
+                <label for="proyecto">Servicio a realizar:</label>
+                <input type="text" id="proyecto" name="proyecto" value="{{ servicio }}" readonly>
+                <input type="hidden" id="precioInicial" name="precioInicial" value="{{ precio }}">
+            </div>
+            <!-- <div class="campos">
+                <label for="idCliente">ID Cliente:</label>
+                <input type="number" id="idCliente" name="idCliente">
+            </div> -->
 
 
-                                <div class="grupo">
-                                    <input type="checkbox" name="servicios[]" value="Control y programación de riego" data-precio="3500" id="check10">
-                                    <label for="check10"> Control y programación de riego <br> <span>RD$3,500.00</span></label>
-                                </div>
-                            </div>
+        </div>
+        <details>
+            <summary>Seleccionar servicios adicionales</summary>
+            <div class="form-grupo" id="servicios-adicionales">
+                <label for="servicios">¿Desea seleccionar servicios adicionales?:</label>
+                <div class="checkbox-grupo">
+                    <div class="columna">
+                        <div class="grupo">
+                            <input type="checkbox" name="servicios[]" value="Mantenimiento" data-precio="2000" id="check1">
+                            <label for="check1"> Mantenimiento <br> <span>RD$2,000.00</span></label>
+                        </div>
+
+                        <div class="grupo">
+                            <input type="checkbox" name="servicios[]" value="Diseños de jardines" data-precio="2500" id="check2">
+                            <label for="check2"> Diseños de jardines <br> <span>RD$2,500.00</span></label>
+                        </div>
+
+                        <div class="grupo">
+                            <input type="checkbox" name="servicios[]" value="Poda de planta" data-precio="1500" id="check3">
+                            <label for="check3"> Poda de planta <br> <span>RD$1,500.00</span></label>
+                        </div>
+
+                        <div class="grupo">
+                            <input type="checkbox" name="servicios[]" value="Abonado" data-precio="1000" id="check4">
+                            <label for="check4"> Abonado <br> <span>RD$1,000.00</span></label>
+                        </div>
+
+                        <div class="grupo">
+                            <input type="checkbox" name="servicios[]" value="Sistema de detección de plagas" data-precio="2500" id="check5">
+                            <label for="check5"> Sistema de detección de plagas <br> <span>RD$2,500.00</span></label>
                         </div>
                     </div>
-                </details>
+                    <div class="columna">
+                        <div class="grupo">
+                            <input type="checkbox" name="servicios[]" value="Tratamiento fitosanitario" data-precio="3000" id="check6">
+                            <label for="check6"> Tratamiento fitosanitario <br> <span>RD$3,000.00</span></label>
+                        </div>
 
-                <div class="enfondo">
-                    <div class="form-grupo2">
-                        <label for="requerimiento">Escriba su requerimiento y/o necesidad:</label>
-                        <textarea id="requerimiento" name="requerimiento" rows="4" required></textarea>
-                    </div>
-                    <div class="form-grupo2">
-                        <label for="enterar">¿Cómo se enteró de nuestros servicios?:</label>
-                        <input type="text" id="enterar" name="enterar" required>
+                        <div class="grupo">
+                            <input type="checkbox" name="servicios[]" value="Eliminación de mala hierbas" data-precio="1000" id="check7">
+                            <label for="check7"> Eliminación de mala hierbas <br> <span>RD$1,000.00</span></label>
+                        </div>
+
+                        <div class="grupo">
+                            <input type="checkbox" name="servicios[]" value="Revisión de sistema de riego" data-precio="3500" id="check8">
+                            <label for="check8"> Revisión de sistema de riego <br> <span>RD$3,500.00</span></label>
+                        </div>
+
+                        <div class="grupo">
+                            <input type="checkbox" name="servicios[]" value="Césped artificial" data-precio="400" id="check9">
+                            <label for="check9"> Césped artificial <br> <span>RD$400.00</span></label>
+                        </div> 
+
+                        <div class="grupo">
+                            <input type="checkbox" name="servicios[]" value="Control y programación de riego" data-precio="3500" id="check10">
+                            <label for="check10"> Control y programación de riego <br> <span>RD$3,500.00</span></label>
+                        </div>
                     </div>
                 </div>
-                <div class="boton_solic">
-                    <div class="form-grupo">
-                        <button type="submit">Solicitar</button>
-                        
-                    </div>
-                </div>
+            </div>
+        </details>
 
-           
-        </article> 
+        <div class="enfondo">
+            <div class="form-grupo2">
+                <label for="requerimiento">Escriba su requerimiento y/o necesidad:</label>
+                <textarea id="requerimiento" name="requerimiento" rows="4" required></textarea>
+            </div>
+            <div class="form-grupo2">
+                <label for="enterar">¿Cómo se enteró de nuestros servicios?:</label>
+                <input type="text" id="enterar" name="enterar" required>
+            </div>
+        </div>
+        <div class="boton_solic">
+            <div class="form-grupo">
+                <button type="submit">Solicitar</button>
+            </div>
+        </div>
+    </form>
+</article>
         <script src="{{ url_for('static', filename='js/cotizar.js') }}"></script>
         <script src="{{ url_for('static', filename='js/fecha.js') }}"></script>
     </section>
