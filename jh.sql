@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 4.8.4
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-07-2024 a las 16:25:56
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Tiempo de generación: 09-08-2024 a las 23:25:11
+-- Versión del servidor: 10.1.37-MariaDB
+-- Versión de PHP: 7.2.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -30,10 +31,10 @@ SET time_zone = "+00:00";
 CREATE TABLE `cliente` (
   `idCliente` int(8) NOT NULL,
   `celular` int(10) NOT NULL,
-  `pais` varchar(30) NOT NULL,
-  `ciudad` varchar(30) NOT NULL,
-  `sector` varchar(30) NOT NULL,
-  `calle` varchar(30) NOT NULL,
+  `pais` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `ciudad` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `sector` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `calle` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `foto` longblob NOT NULL,
   `idUsuario` int(8) NOT NULL,
   `idTarjeta` int(8) NOT NULL
@@ -47,13 +48,25 @@ CREATE TABLE `cliente` (
 
 CREATE TABLE `contacto` (
   `idContacto` int(8) NOT NULL,
-  `nombre` varchar(30) NOT NULL,
-  `correo` varchar(50) NOT NULL,
-  `telefono` int(12) NOT NULL,
+  `nombre` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `correo` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  `telefono` varchar(12) COLLATE utf8_spanish_ci NOT NULL,
   `fecha` date NOT NULL,
-  `estado` varchar(30) NOT NULL,
-  `mensaje` text NOT NULL
+  `estado` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `mensaje` text COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `contacto`
+--
+
+INSERT INTO `contacto` (`idContacto`, `nombre`, `correo`, `telefono`, `fecha`, `estado`, `mensaje`) VALUES
+(1, 'Yerman', 'espinalyerman@gmail.com', '849', '2024-08-09', 'Pendiente', 'hola Como esta'),
+(2, 'Yerman Espinal', 'yoto@gmail.com', '849', '2024-08-09', 'Pendiente', 'Hola jose'),
+(3, 'Jose miguel', 'yoto4@gmail.com', '2147483647', '2024-08-09', 'Pendiente', 'Hola\r\n'),
+(4, 'Jose bello', 'yoto2@gmail.com', '849-861-7224', '2024-08-09', 'Pendiente', 'Hola'),
+(5, 'milton', 'yoto3@gmail.com', '849-861-7224', '2024-08-09', 'Pendiente', 'klk palomo'),
+(6, 'Yerman', 'espinalyerman@gmail.com', '849-861-7224', '2024-08-09', 'Pendiente', 'hola');
 
 -- --------------------------------------------------------
 
@@ -78,8 +91,8 @@ CREATE TABLE `factura` (
 CREATE TABLE `pedidos` (
   `idPedido` int(8) NOT NULL,
   `fechaPedido` date NOT NULL,
-  `estado` varchar(30) NOT NULL,
-  `direccionEnvio` varchar(50) NOT NULL,
+  `estado` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `direccionEnvio` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
   `idProducto` int(8) NOT NULL,
   `idCliente` int(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
@@ -92,12 +105,12 @@ CREATE TABLE `pedidos` (
 
 CREATE TABLE `producto` (
   `idProducto` int(8) NOT NULL,
-  `nombre` varchar(30) NOT NULL,
+  `nombre` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `cantidad` int(30) NOT NULL,
-  `categoria` varchar(30) NOT NULL,
+  `categoria` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `precio` int(30) NOT NULL,
   `imagen` longblob NOT NULL,
-  `descripcion` text NOT NULL
+  `descripcion` text COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
@@ -107,22 +120,17 @@ CREATE TABLE `producto` (
 --
 
 CREATE TABLE `servicio` (
-  `idServicio` int(8) NOT NULL AUTO_INCREMENT,
-  `tipo` varchar(30) NOT NULL,
-  `precio` int(30) NOT NULL,
-  `descripcion` text NOT NULL,
-  `fechaSolicitud` date NOT NULL,
-  `idCliente` int(8) NOT NULL,
-  PRIMARY KEY (`idServicio`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
-
-CREATE TABLE `servicio` (
   `idServicio` int(8) NOT NULL,
-  `tipo` varchar(30) NOT NULL,
-  `precio` int(30) NOT NULL,
-  `descripcion` text NOT NULL,
-  `fechaSolicitud` date NOT NULL,
+  `nombre` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `apellido` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `correo` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `tipoServicio` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `telefono` varchar(12) COLLATE utf8_spanish_ci NOT NULL,
+  `servicioAdicional` varchar(400) COLLATE utf8_spanish_ci NOT NULL,
+  `requerimiento` text COLLATE utf8_spanish_ci NOT NULL,
+  `enterar` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `fecha` date NOT NULL,
+  `precio` int(11) NOT NULL,
   `idCliente` int(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
@@ -134,7 +142,7 @@ CREATE TABLE `servicio` (
 
 CREATE TABLE `tarjeta` (
   `idTarjeta` int(8) NOT NULL,
-  `nomTarjeta` varchar(30) NOT NULL,
+  `nomTarjeta` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `numTarjeta` int(16) NOT NULL,
   `fechaExp` date NOT NULL,
   `cvv` int(5) NOT NULL
@@ -148,11 +156,11 @@ CREATE TABLE `tarjeta` (
 
 CREATE TABLE `usuario` (
   `idUsuario` int(8) NOT NULL,
-  `nombre` varchar(30) NOT NULL,
-  `apellido` varchar(30) NOT NULL,
-  `correo` varchar(30) NOT NULL,
-  `contrasena` varchar(30) NOT NULL,
-  `rol` varchar(30) NOT NULL
+  `nombre` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `apellido` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `correo` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `contrasena` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `rol` varchar(30) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
@@ -228,7 +236,7 @@ ALTER TABLE `cliente`
 -- AUTO_INCREMENT de la tabla `contacto`
 --
 ALTER TABLE `contacto`
-  MODIFY `idContacto` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `idContacto` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `factura`

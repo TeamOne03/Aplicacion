@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, redirect, session, send_from_
 # from flaskext.mysql import MySQL
 from flask_mysqldb import MySQL
 from datetime import datetime
+import random
+import string
 
 # Crear la aplicación
 app = Flask(__name__, template_folder='templates')
@@ -330,7 +332,7 @@ def inicioSesion():
     return render_template('sitio/inicioSesion.html')
 
 @app.route('/olvidarContrasena', methods=['GET', 'POST'])
-def olvidar_contrasena():
+def olvidarContrasena():
     return render_template('sitio/olvidarContrasena.html')
 
 # Ruta para el inicio
@@ -478,9 +480,7 @@ def contactos():
 def nosotros():
     return render_template('sitio/nosotros.html')
 
-@app.route('/servicio1')
-def servicio1():
-    return render_template('sitio/servicio1.html')
+
 
 @app.route('/procedePago')
 def procedePago():
@@ -566,77 +566,104 @@ def planta6():
 def planta7():
     return render_template('sitio/planta7.html')
 
+# @app.route('/confirmaciones/<int:id>')
+# def confirmacion(id):
+#     cursor = mysql.connection.cursor()
+#     cursor.execute("SELECT nombre, apellido, telefono, correo, tipoServicio, precio, requerimiento, enterar FROM servicio WHERE idServicio = %s", (id,))
+#     servicio_data = cursor.fetchone()
+#     cursor.close()
+
+#     # Asumiendo que también tienes estos datos disponibles
+#     metodo_pago = "Tarjeta de crédito"  # o el método de pago correspondiente
+#     servicios_adicionales = "Mantenimiento, Poda de planta"  # o la lista de servicios adicionales
+#     precio_total = servicio_data[5] * 1.18  # Si necesitas calcular el total con impuestos
+#     precio_inicial = servicio_data[5]  # Suponiendo que el precio está en la base de datos
+
+#     return render_template('confirmacion.html', 
+#                            servicio=servicio_data[4],  # tipoServicio
+#                            metodo_pago=metodo_pago, 
+#                            servicios_adicionales=servicios_adicionales, 
+#                            precio_inicial=precio_inicial, 
+#                            precio_total=precio_total)
+
+@app.route('/confirmacion')
+def confirmacion():
+    return render_template('sitio/confirmacion.html')
 
 
 
-@app.route('/solicitarServicio.html', methods=['GET', 'POST'])
+
+@app.route('/solicitarServicio')
+def mostrar_formulario():
+    servicio = request.args.get('servicio')
+    precio = request.args.get('precio')
+    return render_template('sitio/solicitarServicio.html', servicio=servicio, precio=precio)
+
+
+
+@app.route('/solicitarServicio', methods=['POST'])
 def solicitar_servicio():
-    if request.method == 'POST':
-        # Obtiene los datos del formulario
-        nombre = request.form['nombre']
-        apellido = request.form['apellido']
-        celular = request.form['celular']
-        correo = request.form['correo']
-        servicio = request.form['proyecto']
-        requerimiento = request.form['requerimiento']
-        fecha = request.form['fecha']
-        servicios_adicionales = request.form.getlist('servicios[]')
+    nombre = request.form['nombre']
+    apellido = request.form['apellido']
+    correo = request.form['correo']
+    tipoServicio = request.form['proyecto']
+    telefono = request.form['telefono']
+    servicioAdicional = ', '.join(request.form.getlist('servicios[]'))
+    requerimiento = request.form['requerimiento']
+    enterar = request.form['enterar']
+    fecha = request.form['fecha']
+    precio = request.form['precioInicial']
+    idCliente = request.form['idCliente']  
 
-        # Lógica para calcular el precio total
-        precio = calcular_precio(servicios_adicionales)
-
-        # Ejemplo de obtención del idCliente (puedes ajustarlo según tu lógica)
-        idCliente = obtener_id_cliente(correo)  # función para obtener el ID del cliente según el correo
-
-        # Inserta los datos en la base de datos
-        cur = mysql.connection.cursor()
-        cur.execute(
-            "INSERT INTO servicio (tipo, precio, descripcion, fechaSolicitud, idCliente) "
-            "VALUES (%s, %s, %s, %s, %s)",
-            (servicio, precio, requerimiento, fecha, idCliente)
-        )
-        mysql.connection.commit()
-        cur.close()
-
-        return redirect(url_for('index'))  # Redirige a la página principal o a donde desees
     
-    return render_template('sitio/solicitarServicio.html')
+    conn = mysql.connect()
+    cursor = conn.cursor()
 
-def calcular_precio(servicios):
-    precios = {
-        "Mantenimiento": 2000,
-        "Diseños de jardines": 2500,
-        "Poda de planta": 1500,
-        "Abonado": 1000,
-        "Sistema de detección de plagas": 2500,
-        "Tratamiento fitosanitario": 3000,
-        "Eliminación de mala hierbas": 1000,
-        "Revisión de sistema de riego": 3500,
-        "Césped artificial": 400,
-        "Control y programación de riego": 3500,
-    }
-    total = sum(precios.get(servicio, 0) for servicio in servicios)
-    return total
+    
+    cursor.execute('INSERT INTO servicio (nombre, apellido, correo, tipoServicio, telefono, servicioAdicional, requerimiento, enterar, fecha, precio, idCliente) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+                   (nombre, apellido, correo, tipoServicio, telefono, servicioAdicional, requerimiento, enterar, fecha, precio, idCliente))
 
-def obtener_id_cliente(correo):
-    # Ejemplo de cómo podrías obtener el idCliente desde la base de datos usando el correo
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT idCliente FROM clientes WHERE correo = %s", [correo])
-    cliente = cur.fetchone()
-    cur.close()
-    return cliente[0] if cliente else None
+    
+    conn.commit()
+
+    
+    cursor.close()
+    conn.close()
+
+    return redirect('resultado')
+
+def calcular_precio(servicios_adicionales, precio_inicial):
+    
+    precio_total = int(precio_inicial)
+    if 'Mantenimiento' in servicios_adicionales:
+        precio_total += 2000
+    if 'Diseños de jardines' in servicios_adicionales:
+        precio_total += 2500
+    if 'Poda de planta' in servicios_adicionales:
+        precio_total += 1500
+    if 'Abonado' in servicios_adicionales:
+        precio_total += 1000
+    if 'Sistema de detección de plagas' in servicios_adicionales:
+        precio_total += 2500
+    if 'Tratamiento fitosanitario' in servicios_adicionales:
+        precio_total += 3000
+    if 'Eliminación de mala hierbas' in servicios_adicionales:
+        precio_total += 1000
+    if 'Revisión de sistema de riego' in servicios_adicionales:
+        precio_total += 3500
+    if 'Césped artificial' in servicios_adicionales:
+        precio_total += 400
+    if 'Control y programación de riego' in servicios_adicionales:
+        precio_total += 3500
+    
+    return precio_total
+
+
+
 
 @app.route('/resultado')
 def resultado():
     return render_template('sitio/resultado.html')
-
-
-@app.route('/procesarSolicitud', methods=['POST'])
-def procesarSolicitud():
-    # Captura de datos
-    nombre = request.form['nombre']
-    apellido = request.form['apellido']
-    return render_template('resultado.html', nombre=nombre, apellido=apellido)
 
 
 
