@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-08-2024 a las 21:11:06
+-- Tiempo de generación: 23-08-2024 a las 23:20:15
 -- Versión del servidor: 10.1.37-MariaDB
 -- Versión de PHP: 7.2.13
 
@@ -30,15 +30,24 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `cliente` (
   `idCliente` int(8) NOT NULL,
-  `celular` int(10) NOT NULL,
+  `celular` varchar(10) COLLATE utf8_spanish_ci NOT NULL,
   `pais` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `ciudad` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `sector` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `calle` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `foto` longblob NOT NULL,
   `idUsuario` int(8) NOT NULL,
-  `idTarjeta` int(8) NOT NULL
+  `idTarjeta` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `cliente`
+--
+
+INSERT INTO `cliente` (`idCliente`, `celular`, `pais`, `ciudad`, `sector`, `calle`, `foto`, `idUsuario`, `idTarjeta`) VALUES
+(7, '8299681952', 'República Dominicana', 'Santiago', 'pekin', '12', 0x76616c6f72, 11, 8),
+(8, '8299689000', 'República Dominicana', 'Santiago', 'ensanche espaillat', '12', 0x76616c6f72, 12, 11),
+(9, '8299681952', 'República Dominicana', 'Santiago', 'los jardines metropolitanos', 'la mina', 0x76616c6f72, 13, 12);
 
 -- --------------------------------------------------------
 
@@ -81,7 +90,7 @@ CREATE TABLE `pedidos` (
   `fechaPedido` date NOT NULL,
   `estado` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `direccionEnvio` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
-  `idProducto` int(8) NOT NULL,
+  `Productos` int(80) NOT NULL,
   `idCliente` int(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
@@ -174,12 +183,24 @@ CREATE TABLE `servicio` (
 --
 
 CREATE TABLE `tarjeta` (
-  `idTarjeta` int(8) NOT NULL,
+  `idTarjeta` int(11) NOT NULL,
+  `idCliente` int(8) NOT NULL,
   `nomTarjeta` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `numTarjeta` int(16) NOT NULL,
   `fechaExp` date NOT NULL,
   `cvv` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `tarjeta`
+--
+
+INSERT INTO `tarjeta` (`idTarjeta`, `idCliente`, `nomTarjeta`, `numTarjeta`, `fechaExp`, `cvv`) VALUES
+(4, 7, 'milton', 2147483647, '2024-01-01', 123),
+(8, 7, 'visa', 4545, '2024-01-01', 123),
+(10, 8, 'visa', 5454, '2030-03-01', 159),
+(11, 8, 'visa', 4454, '2024-01-01', 454),
+(12, 9, 'visa', 4545, '2028-08-01', 598);
 
 -- --------------------------------------------------------
 
@@ -195,6 +216,15 @@ CREATE TABLE `usuario` (
   `contrasena` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `rol` varchar(30) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `correo`, `contrasena`, `rol`) VALUES
+(11, 'milton', 'valerio', 'milton@gmail.com', 'sha256$G9gAehyBcIuoS7g9$ee3420', 'usuario'),
+(12, 'albiery', 'perez', 'albiery@gmail.com', 'sha256$xk5xPpz0kZHfBDOM$58d93e', 'usuario'),
+(13, 'Esmeralda', 'Ruby', 'zafiro@gmail.com', 'sha256$kcTvu3mEEKDSNv8R$afa014', 'usuario');
 
 --
 -- Índices para tablas volcadas
@@ -227,7 +257,6 @@ ALTER TABLE `factura`
 --
 ALTER TABLE `pedidos`
   ADD PRIMARY KEY (`idPedido`),
-  ADD KEY `idUsuario` (`idProducto`),
   ADD KEY `idCliente` (`idCliente`);
 
 --
@@ -247,7 +276,8 @@ ALTER TABLE `servicio`
 -- Indices de la tabla `tarjeta`
 --
 ALTER TABLE `tarjeta`
-  ADD PRIMARY KEY (`idTarjeta`);
+  ADD PRIMARY KEY (`idTarjeta`),
+  ADD KEY `idCliente` (`idCliente`);
 
 --
 -- Indices de la tabla `usuario`
@@ -263,7 +293,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `idCliente` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `idCliente` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `contacto`
@@ -275,13 +305,13 @@ ALTER TABLE `contacto`
 -- AUTO_INCREMENT de la tabla `factura`
 --
 ALTER TABLE `factura`
-  MODIFY `idFactura` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `idFactura` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `idPedido` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `idPedido` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `producto`
@@ -299,13 +329,13 @@ ALTER TABLE `servicio`
 -- AUTO_INCREMENT de la tabla `tarjeta`
 --
 ALTER TABLE `tarjeta`
-  MODIFY `idTarjeta` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `idTarjeta` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idUsuario` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `idUsuario` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- Restricciones para tablas volcadas
@@ -329,7 +359,7 @@ ALTER TABLE `factura`
 -- Filtros para la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  ADD CONSTRAINT `pedidos_ibfk_1` FOREIGN KEY (`idProducto`) REFERENCES `producto` (`idProducto`),
+  ADD CONSTRAINT `pedidos_ibfk_1` FOREIGN KEY (`Productos`) REFERENCES `producto` (`idProducto`),
   ADD CONSTRAINT `pedidos_ibfk_2` FOREIGN KEY (`idCliente`) REFERENCES `cliente` (`idCliente`);
 
 --
@@ -337,6 +367,12 @@ ALTER TABLE `pedidos`
 --
 ALTER TABLE `servicio`
   ADD CONSTRAINT `servicio_ibfk_1` FOREIGN KEY (`idCliente`) REFERENCES `cliente` (`idCliente`);
+
+--
+-- Filtros para la tabla `tarjeta`
+--
+ALTER TABLE `tarjeta`
+  ADD CONSTRAINT `tarjeta_ibfk_1` FOREIGN KEY (`idCliente`) REFERENCES `cliente` (`idCliente`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

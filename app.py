@@ -1,6 +1,7 @@
 import os
-from flask import Flask, render_template, request, redirect, send_from_directory
+from flask import Flask, render_template, request, redirect, send_from_directory, session, url_for, jsonify
 from flaskext.mysql import MySQL
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
 # Crear la aplicación
@@ -16,20 +17,32 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
 app.config['MYSQL_DATABASE_DB'] = 'jh'
 
-# Configurar la carpeta de subida
+# Configurar la carpeta de subida de las imagenes
 app.config['UPLOAD_FOLDER'] = 'static/img'
 
 # Inicializar la aplicación
 mysql.init_app(app)
 
+# Función para generar una página de detalle de producto
 def generar_pagina_producto(idProducto):
+    # Obtiene un cursor para interactuar con la base de datos
     cursor = mysql.get_db().cursor()
+    
+    # Ejecuta una consulta para obtener el producto con el id proporcionado
     cursor.execute("SELECT * FROM producto WHERE idProducto = %s", (idProducto,))
+    
+    # Recupera el primer resultado de la consulta
     producto = cursor.fetchone()
+    
+    # Cierra el cursor después de completar la consulta
     cursor.close()
 
+    # Verifica si el producto existe
     if producto:
+        # Desempaqueta los valores de la tupla producto en variables individuales
         idProducto, nombre, cantidad, categoria, subcategoria, precio, imagen_ruta, descripcion = producto
+        
+        # Crea un diccionario con los detalles del producto que serán utilizados en la plantilla HTML
         producto_dict = {
             'idProducto': idProducto,
             'nombre': nombre,
@@ -38,44 +51,73 @@ def generar_pagina_producto(idProducto):
             'descripcion': descripcion
         }
 
+        # Abre un archivo en modo de escritura para crear una página de producto individual
         with open(f'templates/sitio/productos{idProducto}.html', 'w') as f:
+            # Renderiza una plantilla HTML con los detalles del producto y escribe el resultado en el archivo
             f.write(render_template('sitio/producto_template.html', producto=producto_dict))
 
+# Ruta para agregar y mostrar productos en la página de admin
 @app.route('/adminAGGProductos', methods=['GET', 'POST'])
 def adminAGGProductos():
+    # Comprueba si la solicitud es de tipo POST (para agregar un producto)
     if request.method == 'POST':
+        # Obtiene los datos del formulario enviados por el usuario
         nombre = request.form['nombre']
         cantidad = request.form['cantidad']
         categoria = request.form['categoria']
-        subcategoria = request.form.get('subcategoria', '')  # Puede no estar presente
+        subcategoria = request.form.get('subcategoria', '')  # Puede no estar presente en el caso de mas vendidos
         precio = request.form['precio']
         imagen = request.files['imagen']
         descripcion = request.form['descripcion']
 
-        # Guardar la imagen en la carpeta 'static/img'
+        # Guarda la imagen en la carpeta 'static/img'
         imagen_ruta = os.path.join(app.config['UPLOAD_FOLDER'], imagen.filename)
         imagen.save(imagen_ruta)
 
+        # Conecta a la base de datos y obtiene un cursor
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO producto (nombre, cantidad, categoria, subcategoria, precio, imagen, descripcion) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                       (nombre, cantidad, categoria, subcategoria, precio, imagen.filename, descripcion))
+        
+        # Ejecuta una consulta para insertar un nuevo producto en la base de datos
+        cursor.execute(
+            "INSERT INTO producto (nombre, cantidad, categoria, subcategoria, precio, imagen, descripcion) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (nombre, cantidad, categoria, subcategoria, precio, imagen.filename, descripcion)
+        )
+        
+        # Confirma los cambios realizados en la base de datos
         conn.commit()
+        
+        # Obtiene el ID del último producto insertado
         idProducto = cursor.lastrowid
+        
+        # Cierra el cursor y la conexión
         cursor.close()
         conn.close()
 
+        # Genera una página de detalle del producto
         generar_pagina_producto(idProducto)
+        
+        # Redirige a la página de administración de productos
         return redirect('/adminAGGProductos')
     
+    # Si la solicitud es de tipo GET, conecta a la base de datos
     conn = mysql.connect()
     cursor = conn.cursor()
+    
+    # Ejecuta una consulta para obtener todos los productos
     cursor.execute("SELECT * FROM producto")
+    
+    # Recupera todos los resultados de la consulta
     productos = cursor.fetchall()
+    
+    # Cierra el cursor y la conexión
     cursor.close()
     conn.close()
 
+    # Crea una lista para almacenar los productos con sus imágenes
     productos_con_imagenes = []
+    
+    # Recorre todos los productos y los agrega a la lista
     for producto in productos:
         idProducto = producto[0]
         nombre = producto[1]
@@ -97,27 +139,50 @@ def adminAGGProductos():
             'descripcion': descripcion
         })
 
+    # Renderiza la plantilla HTML para mostrar los productos en la página de administración
     return render_template('admin/adminAGGProductos.html', productos=productos_con_imagenes)
 
+# Codigo para eliminar un producto
 @app.route('/eliminarProducto/<int:idProducto>', methods=['POST'])
 def eliminarProducto(idProducto):
+    # Conecta a la base de datos y obtiene un cursor
     conn = mysql.connect()
     cursor = conn.cursor()
+    
+    # Ejecuta una consulta para eliminar el producto con el id especificado
     cursor.execute("DELETE FROM producto WHERE idProducto = %s", (idProducto,))
+    
+    # Confirma los cambios realizados en la base de datos
     conn.commit()
+    
+    # Cierra el cursor y la conexión
     cursor.close()
     conn.close()
+    
+    # Redirige a la página de administración de productos
     return redirect('/adminAGGProductos')
 
+# Ruta para mostrar la pagina de el producto agregado
 @app.route('/productos/<int:idProducto>')
 def producto(idProducto):
+    # Obtiene un cursor para interactuar con la base de datos
     cursor = mysql.get_db().cursor()
+    
+    # Ejecuta una consulta para obtener el producto con el id proporcionado
     cursor.execute("SELECT * FROM producto WHERE idProducto = %s", (idProducto,))
+    
+    # Recupera el primer resultado de la consulta
     producto = cursor.fetchone()
+    
+    # Cierra el cursor después de completar la consulta
     cursor.close()
 
+    # Verifica si el producto existe
     if producto:
+        # Desempaqueta los valores de la tupla producto en variables individuales
         idProducto, nombre, cantidad, categoria, subcategoria, precio, imagen_ruta, descripcion = producto
+        
+        # Crea un diccionario con los detalles del producto que serán utilizados en la plantilla HTML
         producto_dict = {
             'idProducto': idProducto,
             'nombre': nombre,
@@ -126,18 +191,33 @@ def producto(idProducto):
             'descripcion': descripcion,
             'cantidad_disponible': cantidad
         }
+        
+        # Renderiza la plantilla HTML con los detalles del producto
         return render_template('sitio/producto_template.html', producto=producto_dict)
+    
+    # Si el producto no existe devuelve un mensaje de error 404
     else:
         return "Producto no encontrado", 404
 
+# Ruta para mostrar el catálogo de productos más vendidos
 @app.route('/catalogo')
 def catalogo():
+    # Obtiene un cursor para interactuar con la base de datos
     cursor = mysql.get_db().cursor()
+    
+    # Ejecuta una consulta para obtener todos los productos de la categoría 'masvendidos'
     cursor.execute("SELECT * FROM producto WHERE categoria = 'masvendidos'")
+    
+    # Recupera todos los resultados de la consulta
     productos = cursor.fetchall()
+    
+    # Cierra el cursor después de completar la consulta
     cursor.close()
 
+    # Crea una lista para almacenar los productos con sus imágenes
     productos_con_imagenes = []
+    
+    # Recorre todos los productos y los agrega a la lista
     for producto in productos:
         idProducto = producto[0]
         nombre = producto[1]
@@ -158,6 +238,7 @@ def catalogo():
             'descripcion': descripcion
         })
 
+    # Renderiza la plantilla HTML para mostrar el catálogo
     return render_template('sitio/catalogo.html', productos=productos_con_imagenes)
 
 @app.route('/plantas')
@@ -284,8 +365,379 @@ def accesorios():
 
     return render_template('sitio/accesorios.html', productos=productos_con_imagenes)
 
+@app.route('/agregarTarjeta', methods=['POST'])
+def agregarTarjeta():
+    nombre = request.form['nombre']
+    numTarjeta = request.form['numTarjeta']
+    mes = request.form['meses']
+    año = request.form['años']
+    fechaExp = f"{año}-{mes}-01"
+    cvv = request.form['cvv']
+    
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    
+    # Obtener el ID del usuario actual desde la sesión
+    correo = session.get('correo')
+    
+    if not correo:
+        return "Usuario no autenticado", 403
+    
+    # Obtener el ID del usuario actual
+    cursor.execute("SELECT idUsuario FROM usuario WHERE correo = %s", (correo,))
+    result = cursor.fetchone()
+    
+    if not result:
+        return "Usuario no encontrado", 404
+    
+    idUsuario = result[0]
+    
+    # Obtener el ID del cliente asociado con el usuario
+    cursor.execute("SELECT idCliente FROM cliente WHERE idUsuario = %s", (idUsuario,))
+    result = cursor.fetchone()
+    
+    if result:
+        idCliente = result[0]
+    else:
+        return "Cliente no encontrado", 404
+    
+    # Insertar nueva tarjeta
+    cursor.execute("INSERT INTO tarjeta (nomTarjeta, numTarjeta, fechaExp, cvv, idCliente) VALUES (%s, %s, %s, %s, %s)", 
+                   (nombre, numTarjeta, fechaExp, cvv, idCliente))
+    conn.commit()
+    
+    # Obtener el ID de la tarjeta recién insertada
+    idTarjeta = cursor.lastrowid
+    
+    # Actualizar el registro del cliente con el ID de la tarjeta
+    cursor.execute("UPDATE cliente SET idTarjeta = %s WHERE idCliente = %s", (idTarjeta, idCliente))
+    conn.commit()
+    
+    cursor.close()
+    conn.close()
+    
+    return redirect(url_for('perfil'))
 
-# Ruta para servir las imágenes
+# Esmeralda comenzamos
+
+@app.route('/registro', methods=['GET', 'POST'])
+def registro():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        correo = request.form['correo']
+        contrasena = request.form['contrasena']
+        confirmarContrasena = request.form['confirmarContrasena']
+        celular = request.form['celular']
+        pais = request.form['pais']
+        ciudad = request.form['ciudad']
+        sector = request.form['sector']
+        calle = request.form['calle']
+
+        if contrasena != confirmarContrasena:
+            return render_template('sitio/registro.html', error='Las contraseñas proporcionadas no coinciden')
+
+        hashed_password = generate_password_hash(contrasena, method='sha256')
+        rol = 'usuario'
+        idTarjeta = None  # No se necesita tarjeta al registrarse inicialmente
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        # Insertar en la tabla de usuario
+        insertarUsuario = '''
+            INSERT INTO usuario (nombre, apellido, correo, contrasena, rol)
+            VALUES (%s, %s, %s, %s, %s)
+        '''
+        datoUsuario = (nombre, apellido, correo, hashed_password, rol)
+        cursor.execute(insertarUsuario, datoUsuario)
+        conn.commit()
+
+        # Obtener el ID del usuario recién insertado
+        idUsuario = cursor.lastrowid
+
+        # Insertar en la tabla de cliente sin idTarjeta
+        insertarCliente = '''
+            INSERT INTO cliente (celular, pais, ciudad, sector, calle, foto, idUsuario)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        '''
+        foto = 'valor'  # Valor por defecto para la foto
+        datoCliente = (celular, pais, ciudad, sector, calle, foto, idUsuario)
+        cursor.execute(insertarCliente, datoCliente)
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return redirect(url_for('inicioSesion'))
+    
+    return render_template('sitio/registro.html')
+
+@app.route('/inicioSesion', methods=['GET', 'POST'])
+def inicioSesion():
+    if request.method == 'POST':
+        correo = request.form['correo']
+        contrasena = request.form['contrasena']
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM usuario WHERE correo = %s", (correo,))
+        usuario = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if usuario:  # Si el usuario es encontrado y la contrasena pertence al mismo correo entonces es redirigido al index ya con la opcion de poder editar su usuario, comprar y solicitar un servicio.
+            hashed_password=usuario[4]
+            session['correo']=correo
+            return redirect('/')
+        else:
+            return render_template('sitio/inicioSesion.html', error='Correo o contraseña incorrectos')
+
+    return render_template('sitio/inicioSesion.html')
+
+# tarjetas
+
+@app.route('/obtenerTarjetas', methods=['GET'])
+def obtener_tarjetas():
+    # Conectarse a la base de datos
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Obtener el ID del usuario actual desde la sesión
+    correo = session.get('correo')
+
+    if not correo:
+        return jsonify({"error": "Usuario no autenticado"}), 403
+
+    # Obtener el ID del usuario actual
+    cursor.execute("SELECT idUsuario FROM usuario WHERE correo = %s", (correo,))
+    result = cursor.fetchone()
+
+    if not result:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    idUsuario = result[0]
+
+    # Obtener el ID del cliente asociado con el usuario
+    cursor.execute("SELECT idCliente FROM cliente WHERE idUsuario = %s", (idUsuario,))
+    result = cursor.fetchone()
+
+    if result:
+        idCliente = result[0]
+    else:
+        return jsonify({"error": "Cliente no encontrado"}), 404
+
+    # Consulta para obtener las tarjetas del cliente sin formateo de fecha
+    cursor.execute("""
+        SELECT idTarjeta, numTarjeta, fechaExp 
+        FROM tarjeta 
+        WHERE idCliente = %s
+    """, (idCliente,))
+    
+    tarjetas = cursor.fetchall()
+
+    # Crear una lista de diccionarios para enviar las tarjetas en formato JSON
+    tarjetas_list = []
+    for tarjeta in tarjetas:
+        tarjetas_list.append({
+            'idTarjeta': tarjeta[0],
+            'numTarjeta': str(tarjeta[1]),  # Convertir numTarjeta a string para que coincida con el formato de la entrada
+            'mesExpiracion': tarjeta[2].strftime('%m'),  # Formatear la fecha si es necesario
+            'añoExpiracion': tarjeta[2].strftime('%Y'),
+        })
+
+    # Cerrar conexión
+    cursor.close()
+    conn.close()
+
+    # Retornar las tarjetas en formato JSON
+    return jsonify(tarjetas_list)
+
+
+@app.route('/eliminarTarjeta', methods=['POST'])
+def eliminar_tarjeta():
+    data = request.get_json()
+
+    # Verificar que el idTarjeta esté presente en la solicitud
+    if 'idTarjeta' not in data:
+        return jsonify({'error': 'El idTarjeta es requerido.'}), 400
+
+    idTarjeta = data['idTarjeta']
+
+    # Conectar a la base de datos
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Ejecutar la consulta de eliminación
+    cursor.execute("DELETE FROM tarjeta WHERE idTarjeta = %s", (idTarjeta,))
+    conn.commit()
+
+    # Verificar si se eliminó alguna fila
+    if cursor.rowcount == 0:
+        cursor.close()
+        conn.close()
+        return jsonify({'error': 'No se encontró la tarjeta con el id especificado.'}), 404
+
+    # Cerrar la conexión
+    cursor.close()
+    conn.close()
+
+    return jsonify({'message': 'Tarjeta eliminada exitosamente.'})
+
+# tarjetas
+
+# factuta 
+
+@app.route('/procesar_compra', methods=['POST'])
+def procesar_compra():
+    if 'correo' not in session:
+        return redirect(url_for('login'))
+
+    if 'direccionEnvio' not in request.form or 'nombreProducto' not in request.form or 'total' not in request.form:
+        return "Datos incompletos", 400
+
+    direccion_envio = request.form['direccionEnvio']
+    nombre_producto = request.form['nombreProducto']
+    total = request.form['total']
+
+    correo_usuario = session['correo']
+    
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT idUsuario FROM usuario WHERE correo = %s", (correo_usuario,))
+    result = cursor.fetchone()
+    if result:
+        id_usuario = result[0]
+    else:
+        cursor.close()
+        conn.close()
+        return "Usuario no encontrado", 404
+
+    cursor.execute("SELECT idCliente FROM cliente WHERE idUsuario = %s", (id_usuario,))
+    result = cursor.fetchone()
+    if result:
+        id_cliente = result[0]
+    else:
+        cursor.close()
+        conn.close()
+        return "Cliente no encontrado", 404
+
+    # Aquí no se verifica el producto, solo se almacenan los nombres directamente
+    fecha_pedido = datetime.now().strftime('%Y-%m-%d')
+    estado = 'pendiente'
+    
+    cursor.execute("""
+        INSERT INTO pedidos (fechaPedido, estado, direccionEnvio, productos, idCliente)
+        VALUES (%s, %s, %s, %s, %s)
+    """, (fecha_pedido, estado, direccion_envio, nombre_producto, id_cliente))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return redirect(url_for('finalizarCompra'))
+
+# factura
+
+@app.route('/perfil')
+def perfil():
+    if 'correo' in session:
+        correo = session['correo'] # Aqui se estable una condicion para poder ingresar a registro, si el usuario no ha iniciado sesion no puede acceder y es redirigido al inicio de sesion, si este ya inciio sesion entonces puede acceder.
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute('SELECT nombre, apellido FROM usuario WHERE correo = %s', (correo,))
+        usuario = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        # El codigo de aqui sirve para que cuando se inicie sesion los valores de nombre y apellido aparezcan en en la pagina de perfil.
+        if usuario:
+            return render_template('sitio/perfil.html', nombre=usuario[0], apellido=usuario[1])
+        else:
+            return redirect('/inicioSesion')
+    else:
+        return redirect('/inicioSesion')
+
+@app.route('/infoPersonal', methods=['GET', 'POST'])
+def infoPersonal():
+    if 'correo' in session:
+        correo = session['correo']
+        try:
+            # Conexión a la base de datos
+            conn = mysql.connect()
+            cursor = conn.cursor()
+
+            if request.method == 'POST':
+                # Obtiene los datos del formulario
+                nombre = request.form.get('nombre')
+                apellido = request.form.get('apellido')
+                celular = request.form.get('celular')
+                pais = request.form.get('pais')
+                ciudad = request.form.get('ciudad')
+                sector = request.form.get('sector')
+                calle = request.form.get('calle')
+
+                # Obtén el idUsuario asociado al correo
+                cursor.execute('SELECT idUsuario FROM usuario WHERE correo = %s', (correo,))
+                idUsuario = cursor.fetchone()
+                
+                if idUsuario:
+                    idUsuario = idUsuario[0]
+
+                    # Actualiza la información del usuario
+                    actualizarUsuario = '''
+                    UPDATE usuario SET nombre = %s, apellido = %s WHERE idUsuario = %s
+                    '''
+                    usuarioDato = (nombre, apellido, idUsuario)
+                    cursor.execute(actualizarUsuario, usuarioDato)
+                    conn.commit()
+
+                    # Actualiza la información del cliente
+                    actualizarCliente = '''
+                    UPDATE cliente SET celular = %s, pais = %s, ciudad = %s, sector = %s, calle = %s WHERE idUsuario = %s
+                    '''
+                    clienteDato = (celular, pais, ciudad, sector, calle, idUsuario)
+                    cursor.execute(actualizarCliente, clienteDato)
+                    conn.commit()
+
+                return redirect('/perfil')
+
+            else:
+                # Obtén el idUsuario asociado al correo
+                cursor.execute('SELECT idUsuario, nombre, apellido FROM usuario WHERE correo = %s', (correo,))
+                usuario = cursor.fetchone()
+                
+                if usuario:
+                    idUsuario, nombre, apellido = usuario
+
+                    # Obtén datos del cliente usando idUsuario
+                    cursor.execute('SELECT celular, pais, ciudad, sector, calle FROM cliente WHERE idUsuario = %s', (idUsuario,))
+                    cliente = cursor.fetchone()
+
+                    if cliente:
+                        celular, pais, ciudad, sector, calle = cliente
+                    else:
+                        celular = pais = ciudad = sector = calle = ''
+
+                    return render_template('sitio/infoPersonal.html', nombre=nombre, apellido=apellido, celular=celular, pais=pais, ciudad=ciudad, sector=sector, calle=calle)
+                else:
+                    return redirect('/inicioSesion')
+                
+        except Exception as e:
+            print(f"Error: {e}")
+            return "Hubo un problema al procesar la solicitud.", 500
+
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        return redirect('/inicioSesion')
+
+# Esmeralda
+
+# Ruta para survir las imágenes
 @app.route('/static/img/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
@@ -323,10 +775,6 @@ def servicios():
 def carrito():
     return render_template('sitio/carrito.html')
 
-@app.route('/perfil')
-def perfil():
-    return render_template('sitio/perfil.html')
-
 @app.route('/fertilizante1')
 def fertilizante1():
     return render_template('sitio/fertilizante1.html')
@@ -362,10 +810,6 @@ def fertilizante7():
 @app.route('/fertilizante8')
 def fertilizante8():
     return render_template('sitio/fertilizante8.html')
-
-@app.route('/inicioSesion')
-def inicioSesion():
-    return render_template('sitio/inicioSesion.html')
 
 @app.route('/herramienta1')
 def herramienta1():
@@ -447,13 +891,36 @@ def procedePago():
 def agregarMetodoPago():
     return render_template('sitio/agregarMetodoPago.html')
 
-@app.route('/inicio_sesion')
-def inicio_sesion():
-    return render_template('sitio/inicio_sesion.html')
-
 @app.route('/metodoPago')
 def metodoPago():
-    return render_template('sitio/metodoPago.html')
+    if 'correo' in session:
+        correo = session['correo']
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        # Obtener idUsuario basado en el correo
+        cursor.execute('SELECT idUsuario FROM usuario WHERE correo = %s', (correo,))
+        usuario = cursor.fetchone()
+        
+        if usuario:
+            idUsuario = usuario[0]
+
+            # Obtener el sector y la calle basado en idUsuario
+            cursor.execute('SELECT sector, calle FROM cliente WHERE idUsuario = %s', (idUsuario,))
+            cliente = cursor.fetchone()
+            sector = cliente[0] if cliente else ''
+            calle = cliente[1] if cliente else ''
+            
+            cursor.close()
+            conn.close()
+            
+            # Pasar el sector, la calle y el correo a la plantilla
+            return render_template('sitio/metodoPago.html', sector=sector, calle=calle, correo=correo)
+
+    # En caso de que 'correo' no esté en la sesión, se devuelve la plantilla con un sector y calle vacíos
+    return render_template('sitio/metodoPago.html', sector='', calle='', correo='')
+
 
 @app.route('/finalizarCompra')
 def finalizarCompra():
@@ -471,9 +938,13 @@ def info_personal():
 def agregar_metodo_pago():
     return render_template('sitio/agregar_metodo_pago.html')
 
-@app.route('/cambiar_contrasena')
-def cambiar_contrasena():
-    return render_template('sitio/cambiar_contrasena.html')
+@app.route('/cambiarContrasena')
+def cambiarContrasena():
+    return render_template('sitio/cambiarContrasena.html')
+
+@app.route('/cerrarSesion')
+def cerrarSesion():
+    return render_template('sitio/cerrarSesion.html')
 
 @app.route('/pedidos')
 def pedidos():
@@ -530,6 +1001,10 @@ def planta6():
 @app.route('/planta7')
 def planta7():
     return render_template('sitio/planta7.html')
+
+@app.route('/olvidarContrasena', methods=['GET', 'POST'])
+def olvidarContrasena():
+    return render_template('sitio/olvidarContrasena.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
