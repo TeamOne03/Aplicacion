@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-08-2024 a las 23:25:11
+-- Tiempo de generación: 23-08-2024 a las 23:33:39
 -- Versión del servidor: 10.1.37-MariaDB
 -- Versión de PHP: 7.2.13
 
@@ -30,15 +30,24 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `cliente` (
   `idCliente` int(8) NOT NULL,
-  `celular` int(10) NOT NULL,
+  `celular` varchar(12) COLLATE utf8_spanish_ci NOT NULL,
   `pais` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `ciudad` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `sector` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `calle` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `foto` longblob NOT NULL,
   `idUsuario` int(8) NOT NULL,
-  `idTarjeta` int(8) NOT NULL
+  `idTarjeta` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `cliente`
+--
+
+INSERT INTO `cliente` (`idCliente`, `celular`, `pais`, `ciudad`, `sector`, `calle`, `foto`, `idUsuario`, `idTarjeta`) VALUES
+(3, '8295637412', 'República Dominicana', 'Santiago', 'Los jardines metroplitanos', 'Mi casa', 0x76616c6f72, 11, NULL),
+(4, '8498617224', 'República Dominicana', 'Santiago', 'pekin', 'calle5', 0x76616c6f72, 15, NULL),
+(6, '8498617224', 'República Dominicana', 'Santiago', 'pekin', 'calle5', '', 15, NULL);
 
 -- --------------------------------------------------------
 
@@ -66,7 +75,11 @@ INSERT INTO `contacto` (`idContacto`, `nombre`, `correo`, `telefono`, `fecha`, `
 (3, 'Jose miguel', 'yoto4@gmail.com', '2147483647', '2024-08-09', 'Pendiente', 'Hola\r\n'),
 (4, 'Jose bello', 'yoto2@gmail.com', '849-861-7224', '2024-08-09', 'Pendiente', 'Hola'),
 (5, 'milton', 'yoto3@gmail.com', '849-861-7224', '2024-08-09', 'Pendiente', 'klk palomo'),
-(6, 'Yerman', 'espinalyerman@gmail.com', '849-861-7224', '2024-08-09', 'Pendiente', 'hola');
+(6, 'Yerman', 'espinalyerman@gmail.com', '849-861-7224', '2024-08-09', 'Pendiente', 'hola'),
+(7, 'papayo', 'yoel@gmail.com', '8497531594', '2024-08-21', 'Pendiente', 'brrr\r\n'),
+(8, 'Yerman', '123456@gmail.com', '849-861-7224', '2024-08-22', 'Pendiente', 'wfd'),
+(9, 'Yerman', 'espinalyerman@gmail.com', '849-861-7224', '2024-08-22', 'Pendiente', 'blo'),
+(10, 'goku', '123456@gmail.com', '8497531594', '2024-08-23', 'Pendiente', 'bley\r\n');
 
 -- --------------------------------------------------------
 
@@ -134,6 +147,19 @@ CREATE TABLE `servicio` (
   `idCliente` int(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
+--
+-- Volcado de datos para la tabla `servicio`
+--
+
+INSERT INTO `servicio` (`idServicio`, `nombre`, `apellido`, `correo`, `tipoServicio`, `telefono`, `servicioAdicional`, `requerimiento`, `enterar`, `fecha`, `precio`, `idCliente`) VALUES
+(1, 'Yerman', 'Espinal', 'espinalyerman@gmail.com', 'Mantenimiento', '849-861-7224', '', 'jla', 'Por milton', '2024-08-22', 2000, 6),
+(2, 'Yerman', 'Espinal', 'yerman@gmail.com', '', '849-861-7224', '', 'hola', 'asdasdsa', '2024-08-22', 0, 4),
+(3, 'Yerman', 'fase4', 'yerman@gmail.com', 'Mantenimiento', '829-777-7777', 'Diseños de jardines', 'yeyey', 'Por jose', '2024-08-22', 2000, 4),
+(4, 'Yerman', 'Espinal', 'yerman@gmail.com', 'Mantenimiento', '849-861-7224', '', 'hla', 'Por milton', '2024-08-23', 2000, 4),
+(5, 'yiyi', 'Espinal', 'yerman@gmail.com', 'Mantenimiento', '849-861-8988', '', 'yerman', 'sadasdsad', '2024-08-23', 2000, 4),
+(9, 'Yerman', 'Espinal', 'yerman@gmail.com', 'Mantenimiento', '849-861-7224', '', 'hola', 'Por milton', '2024-08-23', 2000, 4),
+(10, 'Yei', 'Castillo', 'yerman@gmail.com', 'Sistema de detección de plagas', '849-861-7224', 'Poda de planta, Abonado', 'hole', 'por un amigo', '2024-08-23', 5000, 4);
+
 -- --------------------------------------------------------
 
 --
@@ -162,6 +188,17 @@ CREATE TABLE `usuario` (
   `contrasena` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
   `rol` varchar(30) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `correo`, `contrasena`, `rol`) VALUES
+(11, 'Esmeralda', 'Estrella H.', 'esmeraldastarh@gmail.com', 'sha256$dtTnJGBQDWPNJtVz$a67abc', 'usuario'),
+(12, 'Yerman', 'Espinal', 'espinal1@gmail.com', 'sha256$SfVSxfhPBu7R1GRQ$6c3134', 'usuario'),
+(13, 'Yerman', 'Espinal', 'espinal1@gmail.com', 'sha256$4FCv98TthcjUbQR5$871c1e', 'usuario'),
+(14, 'Yerman', 'Espinal', 'yerman02@gmail.com', 'sha256$ojH3yVqO2i6rYoag$fe1638', 'usuario'),
+(15, 'Yerman', 'Espinal', 'yerman@gmail.com', 'sha256$R4AxPsPxc4QMiEuo$01d1c2', 'usuario');
 
 --
 -- Índices para tablas volcadas
@@ -230,13 +267,13 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `idCliente` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `idCliente` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `contacto`
 --
 ALTER TABLE `contacto`
-  MODIFY `idContacto` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idContacto` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `factura`
@@ -260,7 +297,7 @@ ALTER TABLE `producto`
 -- AUTO_INCREMENT de la tabla `servicio`
 --
 ALTER TABLE `servicio`
-  MODIFY `idServicio` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `idServicio` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `tarjeta`
@@ -272,7 +309,7 @@ ALTER TABLE `tarjeta`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idUsuario` int(8) NOT NULL AUTO_INCREMENT;
+  MODIFY `idUsuario` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Restricciones para tablas volcadas
