@@ -1,16 +1,23 @@
-function sendEmail(){
-    Email.send({
-        Host : "smtp.gmail.com",
-        Username : "jardineriahernandez@gmail.com",
-        Password : "hernandez03.",
-        To : 'jardineria@gmail.com',
-        From : document.getElementById("email").value,
-        Subject : "nuevo contacto formulario consulta ",
-        Body : "nombre: " + document.getElementById("nombre").value
-        + "<br> Email: " + document.getElementById("email").value
-        + "<br> telefono no: " + document.getElementById("telefono").value
-        +"<br> Mensaje: " + document.getElementById("mensaje").value
-    }).then(
-    message => alert("Message sent Succesfully")
-    );
+function Send(){
+    var name = document.getElementById('nombre').value;
+    var email = document.getElementById('email').value;
+    var telefono = document.getElementById('telefono').value;
+    var mensaje = document.getElementById('mensaje').value;
+
+    var body = "nombre:" + name + "<br/> email:" + email + "<br/> telefono :" + telefono + "<br/>"
+
+    console.log(body);
+    // Email.send({
+    // Host : "smtp.elasticemail.com",
+    // Username : "jardineriahernandez3@gmail.com",
+    // Password : "DADD835B9A6C2384459FF31BA5E17874EBC2",
+    // To : 'jardineriahernandez3@gmail.com',
+    // From : "jardineriahernandez3@gmail.com",
+    // Subject : "This is the subject",
+    // Body : "And this is the body"
+    // }).then(
+    //     message => alert(message)
+    //     );
+
+    
 }
