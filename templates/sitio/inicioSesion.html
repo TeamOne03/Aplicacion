@@ -52,10 +52,7 @@
             <li class="menu__Empresa"><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
             <div class="cierraMenu"><i class="fa fa-times"></i></div>
             <span class="iconos">
-                <!-- <i class="fab fa-facebook"></i> -->
                 <a href="https://www.instagram.com/jardineriahernandez21?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"><i class="fab fa-instagram"></i></a>
-                <!-- <i class="fab fa-twitter"></i>
-                <i class="fab fa-github"></i> -->
             </span>
         </ul>
         <div class="flecha">
@@ -71,6 +68,9 @@
 <!-- Esto es inicio de sesión -->
 <main>
     <section>
+        {% if error %}
+           <p>{{ error }}</p>
+        {% endif %}
         <article class="form__usuario">      
             <form id="iniciosesion_form" method="POST" action="{{ url_for('inicioSesion') }}">
                 <h2>Iniciar sesión</h2>
@@ -81,8 +81,8 @@
                 <br>
                 <div class="pass1">
                     <i class="fa fa-key"></i>
-                    <input type="password" id="pass" name="pass" placeholder="Contraseña" required>
-                    <span class="eye" onclick="myFuntion()">
+                    <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña" required>
+                    <span class="eye" onclick="myFunction()">
                         <i id="ocultar" class="fa fa-eye"></i>
                         <i id="ocultar2" class="fa fa-eye-slash"></i>
                     </span>
@@ -113,10 +113,10 @@
 
         </article>
     </section>
-    <script src="{{ url_for('static', filename='js/longin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 </main>
-        <footer class="footer">
-            <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
-        </footer>
+<footer class="footer">
+    <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
+</footer>
 </body>
 </html>

@@ -81,12 +81,11 @@
                             <h3>Mantenimiento</h3>
                             <p>1. Recortar y dar forma a arbustos.<br>2. Eliminar las malas hierbas.<br>3. Aplicación de fertilizante.<br>4. Recogida de basura.</p>
                             <span><p>Precio: RD$2,000.00</p></span>
-                            <div class="botoncito">
-                               <a href="{{ url_for('mostrar_formulario', servicio='Mantenimiento', precio=2000) }}"><input type="submit" value="Solicitar"></a>
+                            <a href="{{ url_for('solicitar_servicio') if 'correo' in session else url_for('inicioSesion') }}">
+                                <div class="botoncito">
+                                <a href="{{ url_for('mostrar_formulario', servicio='Mantenimiento', precio=2000) }}"><input type="submit" value="Solicitar"></a>                           
+                                </div> 
                             </a>
-                            
-
-                            </div>  
                         </div>
                     </figure>
 
@@ -95,10 +94,12 @@
                         <div class="intro">
                             <h3>Diseños de jardines</h3>
                             <p>1. Diseño y construcción de jardines.<br>2. Servicio de control biológico de plagas.<br>3. Mantenimiento de áreas verdes.<br>4. Servicio de traslado y poda de árboles.</p>
-                            <span><p>Precio: RD$2,500.00</p></span> 
-                            <div class="botoncito">
-                                <a href="{{ url_for('mostrar_formulario',servicio='Diseño de jardines', precio=2500) }}"><input type="submit" value="Solicitar"></a>
-                            </div>
+                            <span><p>Precio: RD$2,500.00</p></span>
+                            <a href="{{ url_for('solicitar_servicio') if 'correo' in session else url_for('inicioSesion') }}">
+                                <div class="botoncito">
+                                    <a href="{{ url_for('mostrar_formulario', servicio='Diseño de jardines', precio=2500) }}"><input type="submit" value="Solicitar"></a>
+                                </div>
+                            </a>
                         </div>
                     </figure>
 
@@ -107,10 +108,12 @@
                         <div class="intro">
                             <h3>Poda de planta</h3>
                             <p>1. Recorte de arboles y arbustos.<br>2. Forma de plantas.<br>3. Eliminación de ramas o brotes.</p>
-                            <span><p>Precio: RD$1,500.00</p></span> 
-                            <div class="botoncito">
-                                <a href="{{ url_for('mostrar_formulario',servicio='Poda de planta', precio=1500) }}"><input type="submit" value="Solicitar"></a>
-                            </div>
+                            <span><p>Precio: RD$1,500.00</p></span>
+                            <a href="{{ url_for('solicitar_servicio') if 'correo' in session else url_for('inicioSesion') }}">
+                                <div class="botoncito">
+                                    <a href="{{ url_for('mostrar_formulario', servicio='Poda de planta', precio=1500) }}"><input type="submit" value="Solicitar"></a>
+                                </div>
+                            </a> 
                         </div>
                     </figure>
 
@@ -119,10 +122,12 @@
                         <div class="intro">
                             <h3>Abonado</h3>
                             <p>1. Identificar las necesidades de las plantas<br>2. Selección de abono.<br>3. Época de abonado.<br>4. Aplicación del abono.</p>
-                            <span><p>Precio: RD$1,000.00</p></span> 
-                            <div class="botoncito">
-                                <a href="{{ url_for('mostrar_formulario',servicio='Abonado', precio=1000) }}"><input type="submit" value="Solicitar"></a>
-                            </div>
+                            <span><p>Precio: RD$1,000.00</p></span>
+                            <a href="{{ url_for('solicitar_servicio') if 'correo' in session else url_for('inicioSesion') }}">
+                                <div class="botoncito">
+                                    <a href="{{ url_for('mostrar_formulario', servicio='Abonado', precio=1000 ) }}"><input type="submit" value="Solicitar"></a>
+                                </div>
+                            </a> 
                         </div>
                     </figure>
 
@@ -132,9 +137,11 @@
                             <h3>Sistema de detección de plagas</h3>
                             <p>1. Desinfección.<br>2. Desratización.<br>3. Desinsectación.<br>4. Fumigación.</p>
                             <span><p>Precio: RD$2,500.00</p></span>
-                            <div class="botoncito">
-                                <a href="{{ url_for('mostrar_formulario',servicio='Sistema de detección de plagas', precio=2500) }}"><input type="submit" value="Solicitar"></a>
-                            </div>
+                            <a href="{{ url_for('solicitar_servicio') if 'correo' in session else url_for('inicioSesion') }}">
+                                <div class="botoncito">
+                                    <a href="{{ url_for('mostrar_formulario', servicio='Sistema de detección de plagas', precio=2500) }}"><input type="submit" value="Solicitar"></a>
+                                </div>
+                            </a>
                         </div>
                     </figure>
 
@@ -143,10 +150,12 @@
                         <div class="intro">
                             <h3>Tratamiento fitosanitario</h3>
                             <p>1. Herbicidas.<br>2. Insecticidas.<br>3. Acricidas.<br>4. Bactericidas.</p>
-                            <span><p>Precio: RD$3,000.00</p></span> 
-                            <div class="botoncito">
-                                <a href="{{ url_for('mostrar_formulario',servicio='Tratamiento fitosanitario', precio=3000) }}"><input type="submit" value="Solicitar"></a>
-                            </div>
+                            <span><p>Precio: RD$3,000.00</p></span>
+                            <a href="{{ url_for('solicitar_servicio') if 'correo' in session else url_for('inicioSesion') }}">
+                                <div class="botoncito">
+                                    <a href="{{ url_for('mostrar_formulario', servicio='Tratamiento fitosanitario', precio=3000) }}"><input type="submit" value="Solicitar"></a>
+                                </div>
+                            </a>
                         </div>
                     </figure>
 
@@ -156,9 +165,11 @@
                             <h3>Eliminación de mala hierbas</h3>
                             <p>1. Deshierbar<br>2. Arrancado a mano.<br>3. Productos químicos.<br>4. Control cultural.</p>
                             <span><p>Precio: RD$1,000.00</p></span> 
-                            <div class="botoncito">
-                                <a href="{{ url_for('mostrar_formulario',servicio='Eliminación de mala hierbas', precio=1000) }}"><input type="submit" value="Solicitar"></a>
-                            </div>
+                            <a href="{{ url_for('solicitar_servicio') if 'correo' in session else url_for('inicioSesion') }}">
+                                <div class="botoncito">
+                                    <a href="{{ url_for('mostrar_formulario', servicio='Eliminación de mala hierbas', precio=1000) }}"><input type="submit" value="Solicitar"></a>
+                                </div>
+                            </a>
                         </div>
                     </figure>
 
@@ -168,9 +179,11 @@
                             <h3>Revisión de sistema de riego</h3>
                             <p>1. Sistema de filtrado.<br>2. Sistema de riego.<br>3. Mangueras de polietileno.<br>4. Revisión de riego.</p>
                             <span><p>Precio: RD$3,500.00</p></span> 
-                            <div class="botoncito">
-                                <a href="{{ url_for('mostrar_formulario',servicio='Revisión de sistema de riego', precio=3500) }}"><input type="submit" value="Solicitar"></a>
-                            </div>
+                            <a href="{{ url_for('solicitar_servicio') if 'correo' in session else url_for('inicioSesion') }}">
+                                <div class="botoncito">
+                                    <a href="{{ url_for('mostrar_formulario', servicio='Revisión de sistema de riego', precio=3500) }}"><input type="submit" value="Solicitar"></a>
+                                </div>
+                            </a>
                         </div>
                     </figure>
 
@@ -179,10 +192,12 @@
                         <div class="intro">
                             <h3>Césped artificial</h3>
                             <p>1. Instalación de césped y césped artificial.<br>2. Reparación de césped.<br>3. Supervisión de césped.</p>
-                            <span><p>Precio: RD$400.00</p></span> 
-                            <div class="botoncito">
-                                <a href="{{ url_for('mostrar_formulario',servicio='Césped artificial', precio=400) }}"><input type="submit" value="Solicitar"></a>
-                            </div>
+                            <span><p>Precio: RD$400.00</p></span>
+                            <a href="{{ url_for('solicitar_servicio') if 'correo' in session else url_for('inicioSesion') }}">
+                                <div class="botoncito">
+                                    <a href="{{ url_for('mostrar_formulario', servicio='Césped artificial', precio=400) }}"><input type="submit" value="Solicitar"></a>
+                                </div>
+                            </a>
                         </div>
                     </figure>
 
@@ -192,9 +207,12 @@
                             <h3>Control y programación de riego</h3>
                             <p>1. Fertilización.<br>2. Riego adecuado.<br>3. Control de maleza.<br>4. Aireación del suelo.</p>
                             <span><p>Precio: RD$3,500.00</p></span>
-                            <div class="botoncito">
-                                <a href="{{ url_for('mostrar_formulario',servicio='Control y programación de riego', precio=3500) }}"><input type="submit" value="Solicitar"></a>
-                            </div>
+                            <a href="{{ url_for('solicitar_servicio') if 'correo' in session else url_for('inicioSesion') }}">
+                                <div class="botoncito">
+                                    <a href="{{ url_for('mostrar_formulario', servicio='Control y programación de riego', precio=3500) }}"><input type="submit" value="Solicitar"></a>
+                                </div>
+                            </a>
+                            <!-- <a href="{{ url_for('solicitar_servicio') if 'correo' in session else url_for('inicioSesion') }}"></a> -->
                         </div>
                     </figure>
                 </div>
