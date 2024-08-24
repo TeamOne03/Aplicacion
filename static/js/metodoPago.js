@@ -25,41 +25,5 @@ document.addEventListener('DOMContentLoaded', function() {
         event.target.value = formattedValue;
     });
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const nombre = document.getElementById('nombre').value;
-        let numTarjeta = document.getElementById('numTarjeta').value.replace(/\s+/g, '');
-        const mesExpiracion = document.getElementById('meses').value;
-        const añoExpiracion = document.getElementById('años').value;
-        const cvv = document.getElementById('cvv').value;
-
-        if (numTarjeta.length !== 16) {
-            alert('El número de la tarjeta debe tener 16 dígitos.');
-            return;
-        }
-
-        // Validar si es Visa o MasterCard
-        const firstDigit = numTarjeta.charAt(0);
-        if (!(firstDigit === '4' || (firstDigit >= '5' && firstDigit <= '5'))) {
-            alert('El número de tarjeta debe ser Visa o MasterCard.');
-            return;
-        }
-
-        const tarjeta = {
-            nombre,
-            numTarjeta,
-            mesExpiracion,
-            añoExpiracion,
-            cvv
-        };
-
-        // Guardar en localStorage
-        let tarjetas = JSON.parse(localStorage.getItem('tarjetas')) || [];
-        tarjetas.push(tarjeta);
-        localStorage.setItem('tarjetas', JSON.stringify(tarjetas));
-
-        alert('Tarjeta agregada con éxito');
-        window.location.href = 'procedePago';
-    });
+    // Eliminamos la función de agregar tarjeta ya que ahora se maneja desde el backend en Python
 });

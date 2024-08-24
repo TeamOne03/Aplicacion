@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const totalCarrito = document.getElementById('totalCarrito');
     const totalItebis = document.getElementById('totalItebis');
     const mensajeCarritoVacio = document.getElementById('mensajeCarritoVacio');
+    const totalInput = document.getElementById('totalValue'); // Campo oculto para total
+    const nombreProductoInput = document.getElementById('nombreProducto'); // Campo oculto para nombre del producto
 
     let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
@@ -24,16 +26,20 @@ document.addEventListener("DOMContentLoaded", function() {
             if (productoExistente) {
                 if (productoExistente.cantidad + producto.cantidad <= producto.cantidadDisponible) {
                     productoExistente.cantidad += producto.cantidad;
+                    alert("Producto agregado al carrito");
                 } else {
-                    productoExistente.cantidad = producto.cantidadDisponible;
                     alert("Se ha alcanzado la cantidad máxima disponible para este producto.");
                 }
             } else {
-                carrito.push(producto);
+                if (producto.cantidad <= producto.cantidadDisponible) {
+                    carrito.push(producto);
+                    alert("Producto agregado al carrito");
+                } else {
+                    alert("Se ha alcanzado la cantidad máxima disponible para este producto.");
+                }
             }
 
             localStorage.setItem('carrito', JSON.stringify(carrito));
-            alert("Producto agregado al carrito");
             actualizarCarrito();
         });
     }
@@ -96,6 +102,17 @@ document.addEventListener("DOMContentLoaded", function() {
         totalCarrito.textContent = `RD$${totalFinal.toFixed(2)}`;
         totalItebis.textContent = `RD$${totalItebisCalculado.toFixed(2)}`;
         sessionStorage.setItem('totalFinal', totalFinal.toFixed(2));
+
+        // Actualiza los campos ocultos del formulario en la página de pago
+        if (totalInput) {
+            totalInput.value = totalFinal.toFixed(2);
+        }
+
+        if (nombreProductoInput) {
+            if (carrito.length > 0) {
+                nombreProductoInput.value = carrito[0].nombre; // Asume que solo se necesita el nombre del primer producto
+            }
+        }
     }
 
     function modificarCantidad(index, action) {
@@ -159,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     numeroOrden: Math.floor(Math.random() * 100000),
                     fecha: new Date().toLocaleDateString(),
                     hora: new Date().toLocaleTimeString(),
-                    productos: carrito,
+                    productos: carrito.map(p => p.nombre).join(', '), // Almacena los nombres de todos los productos
                     total: parseFloat(sessionStorage.getItem('totalFinal'))
                 };
                 localStorage.setItem('factura', JSON.stringify(factura));
