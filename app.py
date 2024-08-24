@@ -1,10 +1,11 @@
 import os
-from flask import Flask, render_template, request, redirect, session, send_from_directory
+from flask import Flask, render_template, request, redirect, send_from_directory, session, url_for
 # from flaskext.mysql import MySQL
 from flask_mysqldb import MySQL
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-import random
-import string
+# import pymysql
+# import bcrypt
 
 # Crear la aplicación
 app = Flask(__name__, template_folder='templates')
@@ -19,138 +20,216 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = ''
 app.config['MYSQL_DATABASE_DB'] = 'jh'
 
-# Inicializar la extensión MySQL
+# Configurar la carpeta de subida de las imagenes
+app.config['UPLOAD_FOLDER'] = 'static/img'
+
+# Inicializar la aplicación
 mysql.init_app(app)
 
+# Función para generar una página de detalle de producto
 def generar_pagina_producto(idProducto):
+    # Obtiene un cursor para interactuar con la base de datos
     cursor = mysql.get_db().cursor()
+    
+    # Ejecuta una consulta para obtener el producto con el id proporcionado
     cursor.execute("SELECT * FROM producto WHERE idProducto = %s", (idProducto,))
+    
+    # Recupera el primer resultado de la consulta
     producto = cursor.fetchone()
+    
+    # Cierra el cursor después de completar la consulta
     cursor.close()
 
+    # Verifica si el producto existe
     if producto:
-        idProducto, nombre, cantidad, categoria, precio, imagen_blob, descripcion = producto
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        # Desempaqueta los valores de la tupla producto en variables individuales
+        idProducto, nombre, cantidad, categoria, subcategoria, precio, imagen_ruta, descripcion = producto
+        
+        # Crea un diccionario con los detalles del producto que serán utilizados en la plantilla HTML
         producto_dict = {
             'idProducto': idProducto,
             'nombre': nombre,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         }
 
+        # Abre un archivo en modo de escritura para crear una página de producto individual
         with open(f'templates/sitio/productos{idProducto}.html', 'w') as f:
+            # Renderiza una plantilla HTML con los detalles del producto y escribe el resultado en el archivo
             f.write(render_template('sitio/producto_template.html', producto=producto_dict))
 
+# Ruta para agregar y mostrar productos en la página de admin
 @app.route('/adminAGGProductos', methods=['GET', 'POST'])
 def adminAGGProductos():
+    # Comprueba si la solicitud es de tipo POST (para agregar un producto)
     if request.method == 'POST':
-        try:
-            nombre = request.form['nombre']
-            cantidad = request.form['cantidad']
-            categoria = request.form['categoria']
-            precio = request.form['precio']
-            imagen = request.files['imagen'].read()
-            descripcion = request.form['descripcion']
+        # Obtiene los datos del formulario enviados por el usuario
+        nombre = request.form['nombre']
+        cantidad = request.form['cantidad']
+        categoria = request.form['categoria']
+        subcategoria = request.form.get('subcategoria', '')  # Puede no estar presente en el caso de mas vendidos
+        precio = request.form['precio']
+        imagen = request.files['imagen']
+        descripcion = request.form['descripcion']
 
-            conn = mysql.connect()
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO producto (nombre, cantidad, categoria, precio, imagen, descripcion) VALUES (%s, %s, %s, %s, %s, %s)",
-                           (nombre, cantidad, categoria, precio, imagen, descripcion))
-            conn.commit()
-            idProducto = cursor.lastrowid
-            cursor.close()
-            conn.close()
+        # Guarda la imagen en la carpeta 'static/img'
+        imagen_ruta = os.path.join(app.config['UPLOAD_FOLDER'], imagen.filename)
+        imagen.save(imagen_ruta)
 
-            generar_pagina_producto(idProducto)
-            return redirect('/adminAGGProductos')
-        except Exception as e:
-            print(f"Error al agregar el producto: {e}")
-            return render_template('admin/adminAGGProductos.html', error="Error al agregar el producto. Por favor, intente nuevamente.")
+        # Conecta a la base de datos y obtiene un cursor
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        
+        # Ejecuta una consulta para insertar un nuevo producto en la base de datos
+        cursor.execute(
+            "INSERT INTO producto (nombre, cantidad, categoria, subcategoria, precio, imagen, descripcion) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (nombre, cantidad, categoria, subcategoria, precio, imagen.filename, descripcion)
+        )
+        
+        # Confirma los cambios realizados en la base de datos
+        conn.commit()
+        
+        # Obtiene el ID del último producto insertado
+        idProducto = cursor.lastrowid
+        
+        # Cierra el cursor y la conexión
+        cursor.close()
+        conn.close()
+
+        # Genera una página de detalle del producto
+        generar_pagina_producto(idProducto)
+        
+        # Redirige a la página de administración de productos
+        return redirect('/adminAGGProductos')
     
-    cursor = mysql.get_db().cursor()
+    # Si la solicitud es de tipo GET, conecta a la base de datos
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    
+    # Ejecuta una consulta para obtener todos los productos
     cursor.execute("SELECT * FROM producto")
+    
+    # Recupera todos los resultados de la consulta
     productos = cursor.fetchall()
+    
+    # Cierra el cursor y la conexión
     cursor.close()
+    conn.close()
 
+    # Crea una lista para almacenar los productos con sus imágenes
     productos_con_imagenes = []
+    
+    # Recorre todos los productos y los agrega a la lista
     for producto in productos:
         idProducto = producto[0]
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]
+        precio = producto[5]
+        imagen_ruta = producto[6]
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
             'nombre': nombre,
             'cantidad': cantidad,
             'categoria': categoria,
+            'subcategoria': subcategoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
+    # Renderiza la plantilla HTML para mostrar los productos en la página de administración
     return render_template('admin/adminAGGProductos.html', productos=productos_con_imagenes)
 
+# Codigo para eliminar un producto
 @app.route('/eliminarProducto/<int:idProducto>', methods=['POST'])
 def eliminarProducto(idProducto):
-    try:
-        conn = mysql.connect()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM producto WHERE idProducto = %s", (idProducto,))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return redirect('/adminAGGProductos')
-    except Exception as e:
-        print(f"Error al eliminar el producto: {e}")
-        return redirect('/adminAGGProductos', error="Error al eliminar el producto. Por favor, intente nuevamente.")
+    # Conecta a la base de datos y obtiene un cursor
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    
+    # Ejecuta una consulta para eliminar el producto con el id especificado
+    cursor.execute("DELETE FROM producto WHERE idProducto = %s", (idProducto,))
+    
+    # Confirma los cambios realizados en la base de datos
+    conn.commit()
+    
+    # Cierra el cursor y la conexión
+    cursor.close()
+    conn.close()
+    
+    # Redirige a la página de administración de productos
+    return redirect('/adminAGGProductos')
 
-
+# Ruta para mostrar la pagina de el producto agregado
 @app.route('/productos/<int:idProducto>')
 def producto(idProducto):
+    # Obtiene un cursor para interactuar con la base de datos
     cursor = mysql.get_db().cursor()
+    
+    # Ejecuta una consulta para obtener el producto con el id proporcionado
     cursor.execute("SELECT * FROM producto WHERE idProducto = %s", (idProducto,))
+    
+    # Recupera el primer resultado de la consulta
     producto = cursor.fetchone()
+    
+    # Cierra el cursor después de completar la consulta
     cursor.close()
 
+    # Verifica si el producto existe
     if producto:
-        idProducto, nombre, cantidad, categoria, precio, imagen_blob, descripcion = producto
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        # Desempaqueta los valores de la tupla producto en variables individuales
+        idProducto, nombre, cantidad, categoria, subcategoria, precio, imagen_ruta, descripcion = producto
+        
+        # Crea un diccionario con los detalles del producto que serán utilizados en la plantilla HTML
         producto_dict = {
             'idProducto': idProducto,
             'nombre': nombre,
             'precio': precio,
-            'imagen': imagen_base64,
-            'descripcion': descripcion
+            'imagen': imagen_ruta,
+            'descripcion': descripcion,
+            'cantidad_disponible': cantidad
         }
+        
+        # Renderiza la plantilla HTML con los detalles del producto
         return render_template('sitio/producto_template.html', producto=producto_dict)
+    
+    # Si el producto no existe devuelve un mensaje de error 404
     else:
         return "Producto no encontrado", 404
 
+# Ruta para mostrar el catálogo de productos más vendidos
 @app.route('/catalogo')
 def catalogo():
+    # Obtiene un cursor para interactuar con la base de datos
     cursor = mysql.get_db().cursor()
+    
+    # Ejecuta una consulta para obtener todos los productos de la categoría 'masvendidos'
     cursor.execute("SELECT * FROM producto WHERE categoria = 'masvendidos'")
+    
+    # Recupera todos los resultados de la consulta
     productos = cursor.fetchall()
+    
+    # Cierra el cursor después de completar la consulta
     cursor.close()
 
+    # Crea una lista para almacenar los productos con sus imágenes
     productos_con_imagenes = []
+    
+    # Recorre todos los productos y los agrega a la lista
     for producto in productos:
         idProducto = producto[0]
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]  # no incluye subcategoria
+        precio = producto[5]
+        imagen_ruta = producto[6]  
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
@@ -158,10 +237,11 @@ def catalogo():
             'cantidad': cantidad,
             'categoria': categoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
+    # Renderiza la plantilla HTML para mostrar el catálogo
     return render_template('sitio/catalogo.html', productos=productos_con_imagenes)
 
 @app.route('/plantas')
@@ -177,19 +257,19 @@ def plantas():
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]  # Incluye subcategoria
+        precio = producto[5]
+        imagen_ruta = producto[6]  
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
             'nombre': nombre,
             'cantidad': cantidad,
             'categoria': categoria,
+            'subcategoria': subcategoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
@@ -208,19 +288,19 @@ def fertilizantes():
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]  # Incluye subcategoria
+        precio = producto[5]
+        imagen_ruta = producto[6]  
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
             'nombre': nombre,
             'cantidad': cantidad,
             'categoria': categoria,
+            'subcategoria': subcategoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
@@ -239,19 +319,19 @@ def herramientas():
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]  # Incluye subcategoria
+        precio = producto[5]
+        imagen_ruta = producto[6]  
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
             'nombre': nombre,
             'cantidad': cantidad,
             'categoria': categoria,
+            'subcategoria': subcategoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
@@ -270,75 +350,304 @@ def accesorios():
         nombre = producto[1]
         cantidad = producto[2]
         categoria = producto[3]
-        precio = producto[4]
-        imagen_blob = producto[5]
-        descripcion = producto[6]
-
-        imagen_base64 = base64.b64encode(imagen_blob).decode('utf-8')
+        subcategoria = producto[4]  # Incluye subcategoria
+        precio = producto[5]
+        imagen_ruta = producto[6]  
+        descripcion = producto[7]
 
         productos_con_imagenes.append({
             'idProducto': idProducto,
             'nombre': nombre,
             'cantidad': cantidad,
             'categoria': categoria,
+            'subcategoria': subcategoria,
             'precio': precio,
-            'imagen': imagen_base64,
+            'imagen': imagen_ruta,
             'descripcion': descripcion
         })
 
     return render_template('sitio/accesorios.html', productos=productos_con_imagenes)
 
-
-@app.route('/guardar_contacto', methods=['POST'])
-def guardar_contacto():
+@app.route('/agregarTarjeta', methods=['POST'])
+def agregarTarjeta():
     nombre = request.form['nombre']
-    correo = request.form['email']
-    telefono = request.form['telefono']
-    mensaje = request.form['mensaje']
-    fecha = datetime.now().strftime('%Y-%m-%d')
-    estado = 'Pendiente'
-
-    # Crear un cursor para la conexión a la base de datos
+    numTarjeta = request.form['numTarjeta']
+    mes = request.form['meses']
+    año = request.form['años']
+    fechaExp = f"{año}-{mes}-01"
+    cvv = request.form['cvv']
+    
     conn = mysql.connect()
     cursor = conn.cursor()
-
-    # Ejecutar la consulta SQL
-    cursor.execute('INSERT INTO contacto (nombre, correo, telefono, fecha, estado, mensaje) VALUES (%s, %s, %s, %s, %s, %s)', 
-                   (nombre, correo, telefono, fecha, estado, mensaje))
-
-    # Commit los cambios
+    
+    # Insertar nueva tarjeta
+    cursor.execute("INSERT INTO tarjeta (nomTarjeta, numTarjeta, fechaExp, cvv) VALUES (%s, %s, %s, %s)", 
+                   (nombre, numTarjeta, fechaExp, cvv))
     conn.commit()
+    
+    # Obtener el ID de la tarjeta recién insertada
+    idTarjeta = cursor.lastrowid
+    
+    # Obtener el ID del usuario actual desde la sesión
+    idUsuario = session.get('user_id')
+    
+    # Verificar si el usuario ya tiene un registro en la tabla cliente
+    cursor.execute("SELECT idCliente FROM cliente WHERE idUsuario = %s", (idUsuario,))
+    resultado = cursor.fetchone()
+    
+    if resultado:
+        idCliente = resultado[0]
+        # Actualizar el registro del cliente con el ID de la tarjeta
+        cursor.execute("UPDATE cliente SET idTarjeta = %s WHERE idCliente = %s", (idTarjeta, idCliente))
+    else:
+        # Si el cliente no existe, puedes manejar el error o realizar una acción apropiada
+        return "Cliente no encontrado", 404
 
-    # Cerrar el cursor y la conexión
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    return redirect(url_for('perfil'))
+
+@app.route('/actualizarCliente/<int:idUsuario>', methods=['POST'])
+def actualizarCliente(idUsuario):
+    idTarjeta = request.form['idTarjeta']
+    celular = request.form['celular']
+    pais = request.form['pais']
+    ciudad = request.form['ciudad']
+    sector = request.form['sector']
+    calle = request.form['calle']
+    
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    
+    # Verificar si el cliente existe
+    cursor.execute("SELECT idCliente FROM cliente WHERE idUsuario = %s", (idUsuario,))
+    resultado = cursor.fetchone()
+    
+    if resultado:
+        idCliente = resultado[0]
+        # Actualizar la tabla cliente con el idTarjeta
+        cursor.execute('''
+            UPDATE cliente 
+            SET celular = %s, pais = %s, ciudad = %s, sector = %s, calle = %s, idTarjeta = %s
+            WHERE idCliente = %s
+        ''', (celular, pais, ciudad, sector, calle, idTarjeta, idCliente))
+        conn.commit()
+    else:
+        # Si el cliente no existe, puedes manejar el error o realizar una acción apropiada
+        return "Cliente no encontrado", 404
+
     cursor.close()
     conn.close()
 
-    return redirect('contacto')
-
-@app.route('/contacto')
-def contacto():
-    return render_template('sitio/contacto.html')
-
-@app.route('/registro', methods=['GET', 'POST'])
-def registro():
-    if request.method == 'POST':
-        return redirect('inicioSesion')
-    return render_template('sitio/registro.html')
-
-@app.route('/inicioSesion', methods=['GET', 'POST'])
-def inicioSesion():
-    if request.method == 'POST':
-        return redirect('index')
-    return render_template('sitio/inicioSesion.html')
-
-@app.route('/olvidarContrasena', methods=['GET', 'POST'])
-def olvidarContrasena():
-    return render_template('sitio/olvidarContrasena.html')
+    return "Cliente actualizado exitosamente"
 
 # Ruta para el inicio
 @app.route('/')
 def index():
     return render_template('sitio/index.html')
+
+# --------------------------------------------------------------------------------------------------------------------------------
+# ruta para cuando aun el cliente no se ha registrado y quiero que se registre: a esta parte somos enviados si no estamos registrados cuando intentamos solicitar un servicio, cuando queremos ir a perfil y cuando intentamos agregar algun producto al carrito, ya que para acceder a estas paginas se necesita que el usuario se agregue para acceder a ciertas informaciones mas personales.
+
+@app.route('/registro', methods=['GET', 'POST'])
+def registro():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        correo = request.form['correo']
+        contrasena = request.form['contrasena']
+        confirmarContrasena = request.form['confirmarContrasena']
+        celular = request.form['celular']
+        pais = request.form['pais']
+        ciudad = request.form['ciudad']
+        sector = request.form['sector']
+        calle = request.form['calle']
+
+        if contrasena != confirmarContrasena:
+            return render_template('sitio/registro.html', error='Las contraseñas proporcionadas no coinciden')
+
+        hashed_password = generate_password_hash(contrasena, method='sha256')
+        rol = 'usuario'
+        idTarjeta = 1541254
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        # Insertar en la tabla de usuario los datos correspondiente a esta desde el formulario de registro
+        insertarUsuario= '''
+            INSERT INTO usuario (idUsuario, nombre, apellido, correo, contrasena, rol)
+            VALUES (NULL, %s, %s, %s, %s, %s)
+        '''
+        datoUsuario = (nombre, apellido, correo, hashed_password, rol)
+        
+        cursor.execute(insertarUsuario, datoUsuario)
+        conn.commit()
+
+        # Obtener el ID del usuario recién insertado que se genera automaticamente se registra un nuevo usuario
+        idUsuario = cursor.lastrowid
+
+        # Insertar en la tabla de cliente los datos restantes obtenidos en el formulario de registro
+        foto = 'valor'
+        insertarCliente = '''
+            INSERT INTO cliente (idCliente, celular, pais, ciudad, sector, calle, foto, idUsuario, idTarjeta)
+            VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        '''
+        datoCliente = (celular, pais, ciudad, sector, calle, foto, idUsuario, idTarjeta)  # Asignar None a idTarjeta si es opcional, en este caso como aun la tabla de idTarjeta no esta conectada puede dar conflictos.
+        
+        cursor.execute(insertarCliente, datoCliente)
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return redirect('inicioSesion') # Si los pasos anteriores son correctos el usuario es redirigido a inicio de sesion para continuar el proceso, de lo contrario seria devuelto de nuevo a registro.
+    
+    return render_template('sitio/registro.html')
+
+
+@app.route('/inicioSesion', methods=['GET', 'POST'])
+def inicioSesion():
+    if request.method == 'POST':
+        correo = request.form['correo']
+        contrasena = request.form['contrasena']
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM usuario WHERE correo = %s", (correo,))
+        usuario = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if usuario:  # Si el usuario es encontrado y la contrasena pertence al mismo correo entonces es redirigido al index ya con la opcion de poder editar su usuario, comprar y solicitar un servicio.
+            hashed_password=usuario[4]
+            session['correo']=correo
+            return redirect('/')
+        else:
+            return render_template('sitio/inicioSesion.html', error='Correo o contraseña incorrectos')
+
+    return render_template('sitio/inicioSesion.html') 
+
+@app.route('/perfil')
+def perfil():
+    if 'correo' in session:
+        correo = session['correo']  # Verifica que el usuario esté autenticado
+
+        # Conexión a la base de datos
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        # Obtener nombre y apellido del usuario
+        cursor.execute('SELECT nombre, apellido FROM usuario WHERE correo = %s', (correo,))
+        usuario = cursor.fetchone()
+
+        # Obtener el idUsuario asociado al correo
+        cursor.execute('SELECT idUsuario FROM usuario WHERE correo = %s', (correo,))
+        idUsuario = cursor.fetchone()
+
+        if usuario and idUsuario:
+            idUsuario = idUsuario[0]
+
+            # Obtener el sector del cliente
+            cursor.execute('SELECT sector FROM cliente WHERE idUsuario = %s', (idUsuario,))
+            cliente = cursor.fetchone()
+            sector = cliente[0] if cliente else ''  # Manejo del caso en que no se encuentre el sector
+
+            # Renderiza la plantilla con los datos del usuario y sector
+            response = render_template('sitio/perfil.html', nombre=usuario[0], apellido=usuario[1], sector=sector)
+        else:
+            response = redirect('/inicioSesion')
+
+        # Cerrar el cursor y la conexión
+        cursor.close()
+        conn.close()
+        return response
+    else:
+        return redirect('/inicioSesion')
+
+
+@app.route('/infoPersonal', methods=['GET', 'POST'])
+def infoPersonal():
+    if 'correo' not in session:
+        return redirect('/inicioSesion')
+
+    correo = session['correo']
+    
+    # Conexión a la base de datos
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    if request.method == 'POST':
+        # Obtiene los datos del formulario
+        nombre = request.form.get('nombre')
+        apellido = request.form.get('apellido')
+        celular = request.form.get('celular')
+        pais = request.form.get('pais')
+        ciudad = request.form.get('ciudad')
+        sector = request.form.get('sector')
+        calle = request.form.get('calle')
+
+        # Obtén el idUsuario asociado al correo
+        cursor.execute('SELECT idUsuario FROM usuario WHERE correo = %s', (correo,))
+        idUsuario = cursor.fetchone()
+        
+        if idUsuario:
+            idUsuario = idUsuario[0]
+
+            # Actualiza la información del usuario
+            actualizarUsuario = '''
+            UPDATE usuario SET nombre = %s, apellido = %s WHERE idUsuario = %s
+            '''
+            usuarioDato = (nombre, apellido, idUsuario)
+            cursor.execute(actualizarUsuario, usuarioDato)
+            conn.commit()
+
+            # Actualiza la información del cliente
+            actualizarCliente = '''
+            UPDATE cliente SET celular = %s, pais = %s, ciudad = %s, sector = %s, calle = %s WHERE idUsuario = %s
+            '''
+            clienteDato = (celular, pais, ciudad, sector, calle, idUsuario)
+            cursor.execute(actualizarCliente, clienteDato)
+            conn.commit()
+
+            return "success"
+        
+        cursor.close()
+        conn.close()
+        return redirect('/perfil')
+
+    else:
+        # Obtén el idUsuario asociado al correo
+        cursor.execute('SELECT idUsuario, nombre, apellido FROM usuario WHERE correo = %s', (correo,))
+        usuario = cursor.fetchone()
+        
+        if usuario:
+            idUsuario, nombre, apellido = usuario
+
+            # Obtén datos del cliente usando idUsuario
+            cursor.execute('SELECT celular, pais, ciudad, sector, calle FROM cliente WHERE idUsuario = %s', (idUsuario,))
+            cliente = cursor.fetchone()
+
+            if cliente:
+                celular, pais, ciudad, sector, calle = cliente
+            else:
+                celular = pais = ciudad = sector = calle = ''
+
+            cursor.close()
+            conn.close()
+            return render_template('sitio/infoPersonal.html', nombre=nombre, apellido=apellido, celular=celular, pais=pais, ciudad=ciudad, sector=sector, calle=calle)
+        else:
+            cursor.close()
+            conn.close()
+            return redirect('/inicioSesion')
+
+#---------------------------------------------------------------------------
+
+# Ruta para servir las imágenes
+@app.route('/static/img/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/producto_template')
 def producto_template():
@@ -364,17 +673,9 @@ def adminAccesorios():
 def servicios():
     return render_template('sitio/servicios.html')
 
-@app.route('/cerrarSesion')
-def cerrarSesion():
-    return render_template('sitio/cerrarSesion.html')
-
 @app.route('/carrito')
 def carrito():
     return render_template('sitio/carrito.html')
-
-@app.route('/perfil')
-def perfil():
-    return render_template('sitio/perfil.html')
 
 @app.route('/fertilizante1')
 def fertilizante1():
@@ -472,15 +773,15 @@ def accesorio7():
 def accesorio8():
     return render_template('sitio/accesorio8.html')
 
-@app.route('/contactos')
-def contactos():
-    return render_template('sitio/contactos.html')
+
 
 @app.route('/nosotros')
 def nosotros():
     return render_template('sitio/nosotros.html')
 
-
+@app.route('/servicio1')
+def servicio1():
+    return render_template('sitio/servicio1.html')
 
 @app.route('/procedePago')
 def procedePago():
@@ -498,9 +799,40 @@ def metodoPago():
 def finalizarCompra():
     return render_template('sitio/finalizarCompra.html')
 
-@app.route('/infoPersonal')
-def infoPersonal():
-    return render_template('sitio/infoPersonal.html')
+@app.route('/guardar_contacto', methods=['POST'])
+def guardar_contacto():
+    nombre = request.form['nombre']
+    correo = request.form['email']
+    telefono = request.form['telefono']
+    mensaje = request.form['mensaje']
+    fecha = datetime.now().strftime('%Y-%m-%d')
+    estado = 'Pendiente'
+
+    # Crear un cursor para la conexión a la base de datos
+    conn = mysql.connect()
+    cursor = conn.cursor()
+
+    # Ejecutar la consulta SQL
+    cursor.execute('INSERT INTO contacto (nombre, correo, telefono, fecha, estado, mensaje) VALUES (%s, %s, %s, %s, %s, %s)', 
+                   (nombre, correo, telefono, fecha, estado, mensaje))
+
+    # Commit los cambios
+    conn.commit()
+
+    # Cerrar el cursor y la conexión
+    cursor.close()
+    conn.close()
+
+    return redirect('contacto')
+
+@app.route('/contacto')
+def contacto():
+    return render_template('sitio/contacto.html')
+
+
+@app.route('/info_personal')
+def info_personal():
+    return render_template('sitio/info_personal.html')
 
 @app.route('/agregar_metodo_pago')
 def agregar_metodo_pago():
@@ -509,6 +841,10 @@ def agregar_metodo_pago():
 @app.route('/cambiarContrasena')
 def cambiarContrasena():
     return render_template('sitio/cambiarContrasena.html')
+
+@app.route('/cerrarSesion')
+def cerrarSesion():
+    return render_template('sitio/cerrarSesion.html')
 
 @app.route('/pedidos')
 def pedidos():
@@ -566,74 +902,76 @@ def planta6():
 def planta7():
     return render_template('sitio/planta7.html')
 
-# @app.route('/confirmaciones/<int:id>')
-# def confirmacion(id):
-#     cursor = mysql.connection.cursor()
-#     cursor.execute("SELECT nombre, apellido, telefono, correo, tipoServicio, precio, requerimiento, enterar FROM servicio WHERE idServicio = %s", (id,))
-#     servicio_data = cursor.fetchone()
-#     cursor.close()
-
-#     # Asumiendo que también tienes estos datos disponibles
-#     metodo_pago = "Tarjeta de crédito"  # o el método de pago correspondiente
-#     servicios_adicionales = "Mantenimiento, Poda de planta"  # o la lista de servicios adicionales
-#     precio_total = servicio_data[5] * 1.18  # Si necesitas calcular el total con impuestos
-#     precio_inicial = servicio_data[5]  # Suponiendo que el precio está en la base de datos
-
-#     return render_template('confirmacion.html', 
-#                            servicio=servicio_data[4],  # tipoServicio
-#                            metodo_pago=metodo_pago, 
-#                            servicios_adicionales=servicios_adicionales, 
-#                            precio_inicial=precio_inicial, 
-#                            precio_total=precio_total)
-
 @app.route('/confirmacion')
 def confirmacion():
     return render_template('sitio/confirmacion.html')
 
 
-
-
 @app.route('/solicitarServicio')
 def mostrar_formulario():
     servicio = request.args.get('servicio')
-    precio = request.args.get('precio')
-    return render_template('sitio/solicitarServicio.html', servicio=servicio, precio=precio)
+    precio = request.args.get('total')
+    return render_template('sitio/solicitarServicio.html', servicio=servicio, total=precio)
+
 
 
 
 @app.route('/solicitarServicio', methods=['POST'])
 def solicitar_servicio():
-    nombre = request.form['nombre']
-    apellido = request.form['apellido']
-    correo = request.form['correo']
-    tipoServicio = request.form['proyecto']
-    telefono = request.form['telefono']
-    servicioAdicional = ', '.join(request.form.getlist('servicios[]'))
-    requerimiento = request.form['requerimiento']
-    enterar = request.form['enterar']
-    fecha = request.form['fecha']
-    precio = request.form['precioInicial']
-    idCliente = request.form['idCliente']  
+    if 'correo' in session:
+        correo = session['correo']
+        
+        # Obtén los datos del formulario
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        tipoServicio = request.form['proyecto']
+        telefono = request.form['telefono']
+        servicioAdicional = ', '.join(request.form.getlist('servicios[]'))
+        requerimiento = request.form['requerimiento']
+        enterar = request.form['enterar']
+        fecha = request.form['fecha']
+        precio = request.form['total']
+        
+        # Conexión a la base de datos
+        conn = mysql.connect()
+        cursor = conn.cursor()
 
-    
-    conn = mysql.connect()
-    cursor = conn.cursor()
+        # Obtener idUsuario usando el correo del usuario
+        cursor.execute('SELECT idUsuario FROM usuario WHERE correo = %s', (correo,))
+        idUsuario = cursor.fetchone()
 
-    
-    cursor.execute('INSERT INTO servicio (nombre, apellido, correo, tipoServicio, telefono, servicioAdicional, requerimiento, enterar, fecha, precio, idCliente) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
-                   (nombre, apellido, correo, tipoServicio, telefono, servicioAdicional, requerimiento, enterar, fecha, precio, idCliente))
+        if idUsuario:
+            idUsuario = idUsuario[0]
+            
+            # Obtener idCliente usando idUsuario desde la tabla cliente
+            cursor.execute('SELECT idCliente FROM cliente WHERE idUsuario = %s', (idUsuario,))
+            idCliente = cursor.fetchone()
 
-    
-    conn.commit()
+            if idCliente:
+                idCliente = idCliente[0]
+                
+                # Inserción en la tabla servicio
+                cursor.execute('INSERT INTO servicio (nombre, apellido, correo, tipoServicio, telefono, servicioAdicional, requerimiento, enterar, fecha, precio, idCliente) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+                               (nombre, apellido, correo, tipoServicio, telefono, servicioAdicional, requerimiento, enterar, fecha, precio, idCliente))
+                
+                conn.commit()
+                response = redirect('/resultado')
+            else:
+                # Maneja el caso si no se encuentra el idCliente
+                response = redirect('/error')
+        else:
+            # Maneja el caso si no se encuentra el idUsuario
+            response = redirect('/error')
 
-    
-    cursor.close()
-    conn.close()
+        # Cerrar el cursor y la conexión
+        cursor.close()
+        conn.close()
+        return response
+    else:
+        return redirect('/inicioSesion')
 
-    return redirect('resultado')
 
 def calcular_precio(servicios_adicionales, precio_inicial):
-    
     precio_total = int(precio_inicial)
     if 'Mantenimiento' in servicios_adicionales:
         precio_total += 2000
@@ -658,9 +996,6 @@ def calcular_precio(servicios_adicionales, precio_inicial):
     
     return precio_total
 
-
-
-
 @app.route('/resultado')
 def resultado():
     return render_template('sitio/resultado.html')
@@ -668,6 +1003,13 @@ def resultado():
 
 
 
+
+
+
+
+@app.route('/olvidarContrasena', methods=['GET', 'POST'])
+def olvidarContrasena():
+    return render_template('sitio/olvidarContrasena.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
