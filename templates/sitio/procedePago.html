@@ -64,7 +64,7 @@
             </div>
             <a href="{{ url_for('agregarMetodoPago') }}" class="añadir-tarjeta">+ Agregar tarjeta</a>
             <br><br>
-            <button class="siguente-boton" id="siguiente-btn">Siguiente</button>
+            <a href="{{ url_for('metodoPago') if 'correo' in session else url_for('procedePago') }}"><button class="siguente-boton" id="siguiente-btn">Siguiente</button></a>
         </div>
     </main>
     <footer class="footer">

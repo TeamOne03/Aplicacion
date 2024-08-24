@@ -56,7 +56,7 @@
     </header>
     <div id="contenedor">
         <main class="perfil">
-            <form class="formaPago">
+            <form class="formaPago" action="{{ url_for('agregarTarjeta') }}" method="POST">
                 <h2>Agregar una tarjeta de crédito o débito</h2>
                 
                 <div class="formaPago2">
@@ -90,7 +90,7 @@
                 </div>
                 <div class="formaPago4">
                     <label for="cvv">Código de seguridad (CVV):</label>
-                    <input type="password" id="cvv" name="cvv" maxlength="4" required><br><br>
+                    <input type="password" id="cvv" name="cvv" maxlength="3" required><br><br>
                 </div>
                 <div class="botonPago">
                     <button type="submit">Agregar tu tarjeta</button>

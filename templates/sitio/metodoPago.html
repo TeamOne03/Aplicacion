@@ -66,7 +66,9 @@
                 <hr>
                 <div class="correo">
                     <p>Correo:</p>
-                    <p class="direccion-p">JuanaAlmanzar@gmail.com</p>
+                    <p class="direccion-p">{{ correo }}</p>
+                    <!-- Campo oculto para correo -->
+                    <input type="hidden" name="correo" value="{{ correo }}">
                 </div>
                 <div class="pago-metodo">
                     <p>Método de pago:</p>
@@ -75,8 +77,10 @@
                     <a class="cambiar2" href="{{ url_for('procedePago') }}">Cambiar</a>
                 </div>
                 <div class="direccion">
-                    <p>Dirección de envío:</p>
-                    <p class="direccion-p">Ceibita calle 13 casa No:5</p>
+                    <p>Dirección:</p>
+                    <p class="direccion-p">{{ sector }}, {{ calle }}, Santiago, RD.</p>
+                    <!-- Campos ocultos para dirección -->
+                    <input type="hidden" name="direccionEnvio" value="{{ sector }}, {{ calle }}, Santiago, RD.">
                 </div>
                 <hr>
                 <br>
@@ -84,7 +88,13 @@
                     <input type="checkbox" id="terms" name="terms">
                     <label for="terms">Activar pagos automáticos con mi tarjeta.</label>
                 </div>
-                <a href="{{ url_for('finalizarCompra') }}"><button class="siguente-boton">Confirmar</button></a>
+                <!-- Formulario para enviar datos -->
+                <form action="{{ url_for('procesar_compra') }}" method="post">
+                    <input type="hidden" name="total" id="totalValue" value="500.00"> <!-- Campo oculto para el total -->
+                    <input type="hidden" name="nombreProducto" id="nombreProducto" value=""> <!-- Campo oculto para los nombres de los productos -->
+                    <input type="hidden" name="direccionEnvio" value="{{ sector }}, {{ calle }}, Santiago, RD."> <!-- Campo oculto para dirección -->
+                    <button type="submit" class="siguente-boton">Confirmar</button>
+                </form>
             </div>
         </div>
     </main>
@@ -92,5 +102,27 @@
         <p class="texto__footer">&copy; Todos los derechos reservados - Jardinería Hernández 2024.</p>
     </footer>
     <script src="{{ url_for('static', filename='js/metodo-pago.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/carrito.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const nombreProductoInput = document.getElementById('nombreProducto');
+    
+    if (nombreProductoInput && carrito.length > 0) {
+        // Concatenar los nombres de todos los productos en el carrito, separados por comas
+        const nombresProductos = carrito.map(producto => producto.nombre).join(', ');
+        nombreProductoInput.value = nombresProductos;
+    }
+
+    // Asegúrate de actualizar el total también
+    const totalInput = document.getElementById('totalValue');
+    if (totalInput) {
+        const totalFinal = sessionStorage.getItem('totalFinal');
+        if (totalFinal) {
+            totalInput.value = totalFinal;
+        }
+    }
+    });
+    </script>
 </body>
 </html>
